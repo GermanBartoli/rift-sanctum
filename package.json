@@ -1,0 +1,16 @@
+{
+  "name": "rift-sanctum",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tu identidad, tu legado. Un santuario personal de League of Legends.",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "catalog": "node scripts/catalog.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

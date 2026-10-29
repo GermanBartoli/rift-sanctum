@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KillerBiss · Rift Sanctum</title>
+    <meta
+      name="description"
+      content="El santuario de KillerBiss. Explora su legado en League of Legends y crea tu propia identidad con fondos, íconos y marcos."
+    />
+    <meta name="theme-color" content="#080e17" />
+    <meta property="og:title" content="KillerBiss · Rift Sanctum" />
+    <meta
+      property="og:description"
+      content="Tu identidad. Tu legado. Tu lugar en la Grieta."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#perfil">Ir al perfil</a>
+    <header class="topbar">
+      <a class="brand" href="#perfil" aria-label="Rift Sanctum, inicio"
+        ><img src="/favicon.svg" alt="" /><span
+          >RIFT <b>SANCTUM</b><small>LEAGUE OF LEGENDS</small></span
+        ></a
+      >
+      <nav aria-label="Principal">
+        <a class="active" href="#perfil">MI SANTUARIO</a
+        ><a href="#explorar"
+          >EXPLORAR LAS <span class="soon">PRÓXIMAMENTE</span></a
+        >
+      </nav>
+      <button class="button small" id="customize">
+        ✧ <span>Personalizar perfil</span>
+      </button>
+    </header>
+    <main>
+      <section class="sanctum" id="perfil" aria-label="Perfil de KillerBiss">
+        <img
+          class="backdrop"
+          id="backdrop"
+          alt="Ilustración de fondo del perfil"
+        />
+        <div class="shade"></div>
+        <div class="ambient" aria-hidden="true"></div>
+        <div class="section-bar">
+          <span
+            ><i class="status-dot"></i> LATINOAMÉRICA SUR
+            <span class="divider">/</span> PERFIL DE INVOCADOR</span
+          ><button id="change-background" class="text-button">
+            ▧ Cambiar fondo
+          </button>
+        </div>
+        <div class="profile-layout">
+          <aside class="identity">
+            <span class="eyebrow">EL SANTUARIO DE</span>
+            <button
+              id="change-identity"
+              class="portrait"
+              aria-label="Cambiar ícono y marco"
+            >
+              <img
+                class="profile-icon"
+                id="profile-icon"
+                alt="Ícono de KillerBiss"
+              /><img
+                class="profile-frame"
+                id="profile-frame"
+                alt="Marco de perfil"
+              /><span class="level">414</span
+              ><span class="portrait-edit">✧ Personalizar</span>
+            </button>
+            <h1>KillerBiss</h1>
+            <p class="region">
+              <span class="status-dot"></span> Invocador de LAS
+            </p>
+            <div class="identity-rule"><span>◆</span></div>
+            <p class="identity-quote">
+              Cada partida, una historia.<br />Cada victoria, un legado.
+            </p>
+            <div class="identity-rank">
+              <span class="tiny">RANGO DESTACADO</span><strong>MAESTRO</strong
+              ><span>Flexible · 5 vs. 5</span>
+            </div>
+            <div class="identity-bottom">
+              <span>◆</span><small>FORJADO EN LA GRIETA</small><span>◆</span>
+            </div>
+          </aside>
+          <div class="showcase">
+            <div class="hero-caption">
+              <span class="eyebrow">TU IDENTIDAD. TU LEGADO.</span>
+              <h2>Un lugar entre <br /><em>leyendas.</em></h2>
+              <p>Más que un perfil. Tu historia en la Grieta.</p>
+            </div>
+            <div class="achievements" aria-label="Logros del perfil">
+              <button
+                class="achievement interactive"
+                id="rank-trigger"
+                aria-controls="rank-panel"
+                aria-expanded="false"
+              >
+                <span class="tiny">CLASIFICATORIA</span><strong>Maestro</strong
+                ><img id="rank-emblem" alt="Emblema de Maestro" /><span
+                  class="achievement-note"
+                  >Flexible · 420 PL <span>↗</span></span
+                >
+              </button>
+              <div class="achievement">
+                <span class="tiny">HONOR</span><strong>Nivel 5</strong>
+                <div id="honor-art" class="honor-art" aria-hidden="true">✺</div>
+                <span class="achievement-note">Respeto en la Grieta</span>
+              </div>
+              <button
+                class="achievement interactive"
+                id="mastery-trigger"
+                aria-controls="mastery-panel"
+                aria-expanded="false"
+              >
+                <span class="tiny">MAESTRÍA TOTAL</span><strong>654</strong>
+                <div class="mastery-medal">
+                  <img id="mastery-icon" alt="Miss Fortune" /><span>78</span>
+                </div>
+                <span class="achievement-note"
+                  >Tu legado de campeón <span>↗</span></span
+                >
+              </button>
+              <div class="achievement">
+                <span class="tiny">COPA DEMACIA</span><strong>Nivel III</strong>
+                <div class="cup-art" aria-hidden="true">♜</div>
+                <span class="achievement-note">Equipo de 8</span>
+              </div>
+              <div class="achievement">
+                <span class="tiny">ESTANDARTE</span><strong>El Vacío</strong>
+                <div class="banner-art" aria-hidden="true"><span>✧</span></div>
+                <span class="achievement-note">Una identidad única</span>
+              </div>
+            </div>
+            <div class="showcase-foot">
+              <span
+                >✧ Pasá el mouse por tu rango o maestría para descubrir
+                más</span
+              ><span>PERFIL ORIGINAL · 29 OCT 2026</span>
+            </div>
+          </div>
+        </div>
+        <section
+          class="detail-panel rank-panel"
+          id="rank-panel"
+          aria-label="Detalle de rangos"
+          hidden
+        >
+          <button class="panel-close" aria-label="Cerrar rangos">×</button>
+          <div class="panel-heading">
+            <span class="eyebrow">TU CAMINO COMPETITIVO</span>
+            <h2>El ascenso a Maestro</h2>
+          </div>
+          <div class="rank-grid" id="rank-grid"></div>
+          <p class="panel-source">
+            Datos del perfil de referencia · No sincronizados en tiempo real
+          </p>
+        </section>
+        <section
+          class="detail-panel mastery-panel"
+          id="mastery-panel"
+          aria-label="Detalle de maestrías"
+          hidden
+        >
+          <button class="panel-close" aria-label="Cerrar maestrías">×</button>
+          <div class="mastery-columns">
+            <div>
+              <span class="eyebrow">TUS CAMPEONES INSIGNIA</span>
+              <h2>Maestría de campeón más alta</h2>
+              <div class="champion-grid" id="champion-grid"></div>
+            </div>
+            <div>
+              <span class="eyebrow">HUELLAS EN LA GRIETA</span>
+              <h2>Eternos con mayor progreso</h2>
+              <div class="eternals-grid">
+                <div>
+                  <span class="eternal green">◈</span><strong>2094</strong>
+                  <p>Dracocidio</p>
+                  <small>Shyvana</small>
+                </div>
+                <div>
+                  <span class="eternal">♜</span><strong>2341</strong>
+                  <p>Monstruos épicos<br />asesinados</p>
+                  <small>Jarvan IV</small>
+                </div>
+                <div>
+                  <span class="eternal">♜</span><strong>2938</strong>
+                  <p>Estructuras<br />destruidas</p>
+                  <small>Miss Fortune</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="panel-source">
+            Datos del perfil de referencia · No sincronizados en tiempo real
+          </p>
+        </section>
+      </section>
+      <section class="below-profile">
+        <div>
+          <span class="eyebrow">HECHO A TU MEDIDA</span>
+          <h2>Tu santuario, tus reglas.</h2>
+          <p>
+            Elegí un campeón. Encontrá tu aspecto. Hacé que cada detalle hable
+            de vos.
+          </p>
+        </div>
+        <button class="button" id="open-collection">
+          Explorar la colección <span>↗</span>
+        </button>
+      </section>
+      <section class="explore" id="explorar">
+        <div class="explore-symbol" aria-hidden="true">⌕</div>
+        <div>
+          <span class="eyebrow">EL PRÓXIMO CAPÍTULO</span>
+          <h2>La Grieta tiene más historias.</h2>
+          <p>
+            Buscá invocadores de LAS, explorá sus estadísticas y reviví su
+            historial de partidas.
+          </p>
+          <div class="future-search">
+            <span>Nombre de invocador #LAS</span><span>⌕</span>
+          </div>
+          <span class="development"><span></span> EN DESARROLLO</span>
+          <p class="future-note">
+            El buscador, las cuentas y las estadísticas en vivo llegarán en una
+            próxima etapa.
+          </p>
+        </div>
+        <span class="chapter">02 / PRÓXIMAMENTE</span>
+      </section>
+    </main>
+    <footer>
+      <a class="footer-brand" href="#perfil">◈ RIFT SANCTUM</a>
+      <p>Creado por German Bartoli · Con la colaboración de Codex</p>
+      <small
+        >Proyecto de fans independiente. No afiliado ni respaldado por Riot
+        Games.<br />League of Legends y sus recursos pertenecen a Riot
+        Games.</small
+      >
+    </footer>
+    <dialog id="customizer" aria-labelledby="customizer-title">
+      <div class="dialog-header">
+        <div>
+          <span class="eyebrow">DALE FORMA A TU LEGADO</span>
+          <h2 id="customizer-title">Personalizar santuario</h2>
+        </div>
+        <button
+          class="close-button"
+          id="close-customizer"
+          aria-label="Cerrar personalización"
+        >
+          ×
+        </button>
+      </div>
+      <div class="customizer-body">
+        <aside class="preview">
+          <div class="preview-background" id="preview-background"></div>
+          <div class="preview-shade"></div>
+          <div class="preview-identity">
+            <div class="portrait preview-portrait">
+              <img
+                class="profile-icon"
+                id="preview-icon"
+                alt="Vista previa del ícono"
+              /><img
+                class="profile-frame"
+                id="preview-frame"
+                alt="Vista previa del marco"
+              /><span class="level">414</span>
+            </div>
+            <h3>KillerBiss</h3>
+            <span class="eyebrow">VISTA PREVIA</span>
+          </div>
+        </aside>
+        <section class="collection">
+          <div class="tabs" role="tablist" aria-label="Tipo de personalización">
+            <button role="tab" data-tab="backgrounds" aria-selected="true">
+              Fondos</button
+            ><button role="tab" data-tab="icons" aria-selected="false">
+              Íconos</button
+            ><button role="tab" data-tab="frames" aria-selected="false">
+              Marcos
+            </button>
+          </div>
+          <div class="collection-tools">
+            <label class="search-field"
+              ><span>⌕</span
+              ><input
+                id="catalog-search"
+                type="search"
+                placeholder="Buscar campeón o aspecto…"
+                aria-label="Buscar en la colección" /></label
+            ><select id="champion-filter" aria-label="Filtrar por campeón">
+              <option value="">Todos los campeones</option>
+            </select>
+          </div>
+          <div class="collection-meta">
+            <span id="result-count" aria-live="polite">Cargando colección…</span
+            ><span id="selected-label"></span>
+          </div>
+          <div
+            id="catalog-grid"
+            class="catalog-grid"
+            role="tabpanel"
+            aria-label="Colección"
+          ></div>
+          <div class="pagination">
+            <button id="prev-page" class="text-button">← Anterior</button
+            ><span id="page-info"></span
+            ><button id="next-page" class="text-button">Siguiente →</button>
+          </div>
+        </section>
+      </div>
+      <div class="dialog-footer">
+        <span>Los cambios se guardan en este navegador.</span
+        ><button id="reset-profile" class="text-button">
+          Restaurar original</button
+        ><button id="save-profile" class="button">Guardar cambios</button>
+      </div>
+    </dialog>
+    <div id="toast" role="status" class="toast" hidden></div>
+    <noscript
+      ><p class="noscript">
+        Activá JavaScript para explorar el perfil y personalizar tu santuario.
+      </p></noscript
+    >
+  </body>
+</html>
