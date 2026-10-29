@@ -299,9 +299,6 @@ document.addEventListener("pointerdown", (event) => {
 $("#customize").addEventListener("click", (event) =>
   openCustomizer("backgrounds", event.currentTarget),
 );
-$("#change-background").addEventListener("click", (event) =>
-  openCustomizer("backgrounds", event.currentTarget),
-);
 $("#change-identity").addEventListener("click", (event) =>
   openCustomizer("icons", event.currentTarget),
 );
