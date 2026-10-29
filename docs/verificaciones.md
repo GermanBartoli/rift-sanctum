@@ -1,5 +1,7 @@
 # Verificaciones de la primera versión
 
+Publicado en [Cloudflare Pages](https://rift-sanctum.pages.dev/). Se comprobó HTTP 200 y coincidencia SHA-256 con el build local para `index.html`, `app.js`, `styles.css`, `data/catalog.json` y el fondo original. La revisión del sitio público no registró errores de consola.
+
 - `node --check public/app.js`: sintaxis JavaScript válida.
 - `npm test`: búsqueda por nombre, ID y campeón; normalización de acentos; validación de preferencias dañadas; correspondencia de rangos y maestrías con las capturas.
 - `npm run build`: generación de `dist/` y validación de las tres colecciones.
