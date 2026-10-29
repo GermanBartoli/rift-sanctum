@@ -244,7 +244,8 @@ function openCustomizer(tab, trigger) {
   applyAppearance(draft, true);
   setTab(tab);
   dialog.showModal();
-  $("#catalog-search").focus();
+  // Abrir sobre la pestaña activa evita seleccionar el buscador sin intención.
+  $(`[data-tab="${tab}"]`).focus({ preventScroll: true });
 }
 
 const panelPairs = [

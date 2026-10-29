@@ -241,7 +241,7 @@ img {
 .section-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 25px 4%;
   font-size: 9px;
   letter-spacing: 1.6px;
@@ -586,7 +586,7 @@ img {
 }
 .showcase-foot {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
   margin-top: 25px;
   font-size: 8px;
@@ -964,6 +964,13 @@ dialog::backdrop {
   flex: 1;
   min-width: 0;
   color: var(--gold);
+}
+.search-field:focus-within {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+.search-field input:focus-visible {
+  outline: none;
 }
 input {
   width: 100%;
