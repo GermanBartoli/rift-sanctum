@@ -1006,6 +1006,7 @@ select {
 }
 .catalog-grid {
   display: grid;
+  grid-auto-rows: max-content;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   height: 315px;
