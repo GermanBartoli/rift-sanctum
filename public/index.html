@@ -49,6 +49,7 @@
         </div>
         <div class="profile-layout">
           <aside class="identity">
+            <button id="change-banner" class="text-button" type="button">Cambiar banner</button>
             <span class="eyebrow">EL SANTUARIO DE</span>
             <button
               id="change-identity"
@@ -97,14 +98,12 @@
                 <span class="tiny">CLASIFICATORIA</span><strong>Maestro</strong
                 ><img id="rank-emblem" alt="Emblema de Maestro" /><span
                   class="achievement-note"
-                  >Solo/Dúo <span>↗</span></span
+                  >Solo/Dúo</span
                 >
               </button>
-              <div class="achievement">
+              <button type="button" class="achievement interactive">
                 <span class="tiny">HONOR</span><strong>Nivel 5</strong>
-                <div id="honor-art" class="honor-art" aria-hidden="true">✺</div>
-                <span class="achievement-note">Respeto en la Grieta</span>
-              </div>
+                <div id="honor-art" class="honor-art" aria-hidden="true">✺</div><span class="achievement-note">Respeto en la Grieta</span></button>
               <button
                 class="achievement interactive"
                 id="mastery-trigger"
@@ -116,19 +115,15 @@
                   <img id="mastery-icon" alt="Miss Fortune" /><span>78</span>
                 </div>
                 <span class="achievement-note"
-                  >Tu legado de campeón <span>↗</span></span
+                  >Tu legado de campeón</span
                 >
               </button>
-              <div class="achievement">
+              <button type="button" class="achievement interactive">
                 <span class="tiny">COPA DEMACIA</span><strong>Nivel III</strong>
-                <div class="cup-art" aria-hidden="true">♜</div>
-                <span class="achievement-note">Equipo de 8</span>
-              </div>
-              <div class="achievement">
+                <div class="cup-art" aria-hidden="true">♜</div><span class="achievement-note">Equipo de 8</span></button>
+              <button type="button" class="achievement interactive">
                 <span class="tiny">ESTANDARTE</span><strong>El Vacío</strong>
-                <div class="banner-art" aria-hidden="true"><span>✧</span></div>
-                <span class="achievement-note">Una identidad única</span>
-              </div>
+                <div class="banner-art" aria-hidden="true"><span>✧</span></div><span class="achievement-note">Una identidad única</span></button>
             </div>
             <div class="showcase-foot">
               <span>PERFIL ORIGINAL · 29 OCT 2026</span>
@@ -218,7 +213,7 @@
       <div class="customizer-body">
         <aside class="preview">
           <div class="preview-background" id="preview-background"></div>
-          <div class="preview-shade"></div>
+          <div class="preview-shade"></div><img id="preview-banner" class="preview-banner" alt="Vista previa del banner" />
           <div class="preview-identity">
             <div class="portrait preview-portrait">
               <img
@@ -243,7 +238,7 @@
               Íconos</button
             ><button role="tab" data-tab="frames" aria-selected="false">
               Marcos
-            </button><button role="tab" data-tab="honors" aria-selected="false">Honor</button><button role="tab" data-tab="trophies" aria-selected="false">Trofeos</button><button role="tab" data-tab="banners" aria-selected="false">Estandartes</button>
+            </button><button role="tab" data-tab="profileBanners" aria-selected="false">Banners de perfil</button><button role="tab" data-tab="honors" aria-selected="false">Honor</button><button role="tab" data-tab="trophies" aria-selected="false">Trofeos</button><button role="tab" data-tab="banners" aria-selected="false">Estandartes</button>
           </div>
           <div class="collection-tools">
             <label class="search-field"

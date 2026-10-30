@@ -1753,3 +1753,10 @@ select {
 .catalog-item[data-frame-type="ranked"] img { object-fit:contain; object-position:center; }
 
 .portrait[data-frame-type="ranked"] .profile-icon { top:60%; width:90px; height:90px; }
+
+.identity { background-size: 100% 100%; background-repeat: no-repeat; }
+.achievement.interactive { cursor: pointer; }
+.achievement.interactive:focus-visible { background: linear-gradient(0deg, #b282e51f, transparent); }
+.preview-banner { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; opacity: .8; }
+.preview-identity { z-index: 1; }
+.catalog-grid.profileBanners img { height: 150px; object-fit: contain; }

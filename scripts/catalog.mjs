@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -140,7 +140,11 @@ for (const [list, id, filename] of [
   );
   selected.image = `/assets/${filename}`;
 }
+// Conserva las colecciones complementarias al regenerar los recursos principales.
+const previous = JSON.parse(await readFile(path.join(root, "public/data/catalog.json"), "utf8"));
+const profileBanners = Object.entries(generic).filter(([key]) => key.startsWith("regalia-bannerskins-")).flatMap(([group, items]) => Object.entries(items).map(([id, image]) => ({ id: `${group}-${id}`, name: tierNames[id] || (id === "default" ? "Clásico" : `Evento ${id}`), image: convert(image) })));
 const catalog = {
+  honors: previous.honors, trophies: previous.trophies, banners: previous.banners, profileBanners,
   source: "CommunityDragon",
   locale: "es_MX",
   updatedAt: new Date().toISOString(),
@@ -148,7 +152,7 @@ const catalog = {
   icons,
   frames,
   assets,
-  defaults,
+  defaults: { ...previous.defaults, ...defaults, profileBanner: "regalia-bannerskins-pastrank-master" },
 };
 await writeFile(
   path.join(root, "public/data/catalog.json"),

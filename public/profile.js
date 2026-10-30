@@ -61,6 +61,7 @@ export function validateAppearance(candidate, catalog) {
   const result = {};
   for (const [key, collection] of [
     ["background", "backgrounds"],
+    ["profileBanner", "profileBanners"],
     ["icon", "icons"],
     ["frame", "frames"], ["honor", "honors"], ["trophy", "trophies"], ["banner", "banners"],
   ]) {

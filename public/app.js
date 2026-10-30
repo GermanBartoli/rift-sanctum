@@ -14,8 +14,8 @@ let catalog,
   page = 1;
 const pageSize = 24;
 let opener, toastTimer;
-const typeKey = { backgrounds: "background", icons: "icon", frames: "frame", honors: "honor", trophies: "trophy", banners: "banner" };
-const labels = { backgrounds: "fondos", icons: "íconos", frames: "marcos", honors: "niveles de honor", trophies: "trofeos", banners: "estandartes" };
+const typeKey = { profileBanners: "profileBanner", backgrounds: "background", icons: "icon", frames: "frame", honors: "honor", trophies: "trophy", banners: "banner" };
+const labels = { profileBanners: "banners de perfil", backgrounds: "fondos", icons: "íconos", frames: "marcos", honors: "niveles de honor", trophies: "trofeos", banners: "estandartes" };
 
 function toast(message) {
   clearTimeout(toastTimer);
@@ -34,6 +34,9 @@ function getItem(collection, id) {
 }
 
 function applyAppearance(value, previewOnly = false) {
+  const banner = getItem("profileBanners", value.profileBanner);
+  $("#preview-banner").src = banner.image;
+  if (!previewOnly) $(".identity").style.backgroundImage = `url("${banner.image}")`;
   const background = getItem("backgrounds", value.background);
   const icon = getItem("icons", value.icon);
   const frame = getItem("frames", value.frame);
@@ -411,5 +414,8 @@ async function initialize() {
 initialize();
 
 for (const [selector, tab] of [["#honor-art","honors"],[".cup-art","trophies"],[".banner-art","banners"]]) {
- const card=$(selector).parentElement; const button=document.createElement("button"); button.className="text-button"; button.textContent="Personalizar"; button.onclick=()=>openCustomizer(tab,button); card.append(button);
+ const card = $(selector).parentElement;
+ card.addEventListener("click", () => openCustomizer(tab, card));
 }
+
+$("#change-banner").addEventListener("click", (event) => openCustomizer("profileBanners", event.currentTarget));

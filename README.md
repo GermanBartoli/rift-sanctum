@@ -84,7 +84,7 @@ La solapa **Tu Santuario** consulta Riot ID completos en LAS mediante `functions
 
 ## Publicación
 
-Preparado para **Cloudflare Pages**, mediante carga directa del contenido de `dist/`. La primera publicación se realiza desde el panel de Cloudflare. Los pushes a GitHub no publican automáticamente en esta modalidad. Para futuras actualizaciones, ejecutá las pruebas y el build y creá un nuevo despliegue con esa carpeta.
+Los pushes a `main` ejecutan pruebas, build y publicación en **Cloudflare Pages** mediante GitHub Actions. Requiere configurar secretos: ver [publicación automática](docs/despliegue.md).
 
 ## Autoría y recursos
 
