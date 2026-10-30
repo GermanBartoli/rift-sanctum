@@ -452,5 +452,3 @@ for (const [selector, tab] of [["#honor-art","honors"],[".cup-art","trophies"],[
  const card = $(selector).parentElement;
  card.addEventListener("click", () => openCustomizer(tab, card));
 }
-
-$("#change-banner").addEventListener("click", (event) => openCustomizer("profileBanners", event.currentTarget));
