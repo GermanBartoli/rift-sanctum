@@ -33,10 +33,43 @@ function getItem(collection, id) {
   );
 }
 
+// Calcula el encuadre visible sin los márgenes transparentes del recurso de Riot.
+let bannerActual;
+function ajustarBanner(url) {
+  const identity = $(".identity");
+  bannerActual = url;
+  identity.style.backgroundImage = `url("${url}")`;
+  identity.style.backgroundSize = "148% 104%";
+  const image = new Image();
+  image.crossOrigin = "anonymous";
+  image.onload = () => {
+    if (bannerActual !== url) return;
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 145;
+      canvas.height = Math.round(image.height * 145 / image.width);
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let left = canvas.width, right = -1, top = canvas.height, bottom = -1;
+      for (let y = 0; y < canvas.height; y++) for (let x = 0; x < canvas.width; x++) {
+        if (pixels[(y * canvas.width + x) * 4 + 3] < 20) continue;
+        left = Math.min(left, x); right = Math.max(right, x);
+        top = Math.min(top, y); bottom = Math.max(bottom, y);
+      }
+      if (right < left) return;
+      const width = right - left + 1, height = bottom - top + 1;
+      identity.style.backgroundSize = `${canvas.width / width * 100}% ${canvas.height / height * 100}%`;
+      identity.style.backgroundPosition = `${canvas.width === width ? 0 : left / (canvas.width - width) * 100}% ${canvas.height === height ? 0 : top / (canvas.height - height) * 100}%`;
+    } catch { /* Mantiene el encuadre alternativo si la fuente impide leer los píxeles. */ }
+  };
+  image.src = url;
+}
+
 function applyAppearance(value, previewOnly = false) {
   const banner = getItem("profileBanners", value.profileBanner);
   $("#preview-banner").src = banner.image;
-  if (!previewOnly) $(".identity").style.backgroundImage = `url("${banner.image}")`;
+  if (!previewOnly) ajustarBanner(banner.image);
   const background = getItem("backgrounds", value.background);
   const icon = getItem("icons", value.icon);
   const frame = getItem("frames", value.frame);
@@ -232,7 +265,9 @@ function setTab(tab) {
       ? "Buscar campeón o aspecto…"
       : tab === "icons"
         ? "Buscar ícono por nombre o número…"
-        : "Buscar rango o nivel…";
+        : tab === "profileBanners" || tab === "banners"
+          ? "Buscar banner o estandarte…"
+          : "Buscar rango o nivel…";
   document.querySelectorAll("[data-tab]").forEach((button) => {
     const active = button.dataset.tab === tab;
     button.setAttribute("aria-selected", String(active));

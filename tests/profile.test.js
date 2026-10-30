@@ -36,3 +36,15 @@ test("Rangos y maestrías preservan los valores de las capturas", () => {
   assert.equal(profile.champions[1].mastery, 78);
   assert.equal(profile.masteryScore, 654);
 });
+
+
+test("Banners de eventos disponibles y preferencias anteriores compatibles", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const catalog = JSON.parse(await readFile(new URL("../public/data/catalog.json", import.meta.url), "utf8"));
+  assert.ok(filterCatalog(catalog.profileBanners, "Jinx").length);
+  assert.ok(filterCatalog(catalog.profileBanners, "Hall of Legends 2026").length);
+  assert.equal(new Set(catalog.profileBanners.map(item => item.id)).size, catalog.profileBanners.length);
+  assert.equal(validateAppearance({ profileBanner: "regalia-bannerskins-pastrank-master" }, catalog).profileBanner, "regalia-bannerskins-pastrank-master");
+  const banner = filterCatalog(catalog.profileBanners, "Jinx")[0];
+  assert.equal(validateAppearance({ profileBanner: banner.id }, catalog).profileBanner, banner.id);
+});

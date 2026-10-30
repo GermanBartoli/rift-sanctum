@@ -143,6 +143,14 @@ for (const [list, id, filename] of [
 // Conserva las colecciones complementarias al regenerar los recursos principales.
 const previous = JSON.parse(await readFile(path.join(root, "public/data/catalog.json"), "utf8"));
 const profileBanners = Object.entries(generic).filter(([key]) => key.startsWith("regalia-bannerskins-")).flatMap(([group, items]) => Object.entries(items).map(([id, image]) => ({ id: `${group}-${id}`, name: tierNames[id] || (id === "default" ? "Clásico" : `Evento ${id}`), image: convert(image) })));
+const regalia = await json(localized + "v1/regalia.json");
+for (const item of regalia) {
+  if (item.regaliaType !== "kBanner" || !item.assetPath || !item.isSelectable) continue;
+  const image = convert(item.assetPath);
+  const existing = profileBanners.find((banner) => banner.image === image);
+  if (existing) existing.name = item.localizedName || existing.name;
+  else profileBanners.push({ id: "regalia-" + item.id, name: item.localizedName || "Banner " + item.id, image });
+}
 const catalog = {
   honors: previous.honors, trophies: previous.trophies, banners: previous.banners, profileBanners,
   source: "CommunityDragon",

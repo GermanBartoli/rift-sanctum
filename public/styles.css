@@ -1760,3 +1760,9 @@ select {
 .preview-banner { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; opacity: .8; }
 .preview-identity { z-index: 1; }
 .catalog-grid.profileBanners img { height: 150px; object-fit: contain; }
+
+/* El arte llega hasta las líneas laterales; el foco usa un único borde. */
+.identity { background-position: center top; }
+#riot-id { appearance: none; border-radius: 4px; box-shadow: none; }
+#riot-id:focus, #riot-id:focus-visible { outline: none; border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.search-field input { appearance: none; box-shadow: none; border: 0; }
