@@ -62,8 +62,9 @@ export function validateAppearance(candidate, catalog) {
   for (const [key, collection] of [
     ["background", "backgrounds"],
     ["icon", "icons"],
-    ["frame", "frames"],
+    ["frame", "frames"], ["honor", "honors"], ["trophy", "trophies"], ["banner", "banners"],
   ]) {
+    if (!catalog[collection]) continue;
     const id = String(candidate?.[key] ?? "");
     result[key] = catalog[collection].some((item) => String(item.id) === id)
       ? id

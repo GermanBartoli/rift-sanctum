@@ -80,7 +80,7 @@ El proceso necesita Internet y descarga recursos públicos, sin claves de Riot. 
 
 Los rangos, maestrías, honor y nivel son una transcripción de las capturas del 29 de octubre de 2026; **no se sincronizan en tiempo real**. La personalización afecta la apariencia de este sitio y se guarda por navegador: no modifica el cliente de League of Legends ni la cuenta de Riot, y no se comparte todavía con otros visitantes.
 
-El buscador de perfiles LAS, las cuentas, las estadísticas y el historial están señalados como **En desarrollo**. Su implementación futura necesitará un servicio de datos y la integración autorizada con Riot Games. No hay claves privadas ni credenciales en el frontend.
+La solapa **Tu Santuario** consulta Riot ID completos en LAS mediante `functions/api/player.js`. Requiere configurar `RIOT_API_KEY` como secreto de Cloudflare Pages. Sin esa clave, muestra conexión pendiente. Las sugerencias corresponden a las últimas cuentas consultadas en este navegador: Riot no ofrece búsqueda global por coincidencias parciales. El historial muestra las últimas cinco partidas al consultar; no se actualiza automáticamente. Honor, trofeos y estandartes no están disponibles en la API y se indican como tales. Mi Santuario conserva sus datos de referencia y su personalización local.
 
 ## Publicación
 
@@ -91,3 +91,9 @@ Preparado para **Cloudflare Pages**, mediante carga directa del contenido de `di
 Creado por **German Bartoli**, con **Codex** como colaborador de desarrollo. Los commits realizados con Codex incluyen `Co-authored-by: Codex <noreply@openai.com>`.
 
 Rift Sanctum es un proyecto de fans independiente y no está afiliado ni respaldado por Riot Games. League of Legends, los personajes, las ilustraciones, los íconos y los emblemas pertenecen a Riot Games y conservan sus derechos originales. La publicación de este repositorio no concede derechos sobre esos recursos.
+
+## Cambios de personalización
+
+Honor, trofeos y estandartes se eligen desde el personalizador y se guardan junto con el fondo, icono y marco. Los marcos locales están recortados a su área visible. El inicio ocupa al menos la altura disponible de la ventana.
+
+Para publicar con la sesión de Cloudflare autenticada: `npx wrangler pages deploy dist --project-name rift-sanctum`. La carpeta `functions` debe permanecer junto a `dist` al ejecutar el comando.

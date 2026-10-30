@@ -16,7 +16,7 @@
     />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
-    <script type="module" src="/app.js"></script>
+    <script type="module" src="/live.js"></script><script type="module" src="/app.js"></script>
   </head>
   <body>
     <a class="skip" href="#perfil">Ir al perfil</a>
@@ -27,11 +27,7 @@
         ></a
       >
       <nav aria-label="Principal">
-        <a class="active" href="#perfil">MI SANTUARIO</a
-        ><a href="#explorar"
-          >EXPLORAR LAS <span class="soon">PRÓXIMAMENTE</span></a
-        >
-      </nav>
+        <a class="active" id="my-tab" href="#perfil">MI SANTUARIO</a><a id="live-tab" href="#buscar">TU SANTUARIO</a></nav><form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="Nombre#LAS" list="recent-players" required maxlength="50"><datalist id="recent-players"></datalist><button class="button small">Buscar</button></form>
       <button class="button small" id="customize">
         ✧ <span>Personalizar perfil</span>
       </button>
@@ -80,7 +76,7 @@
             </p>
             <div class="identity-rank">
               <span class="tiny">RANGO DESTACADO</span><strong>MAESTRO</strong
-              ><span>Solo/Dúo · 79 PL</span>
+              ><span>Solo/Dúo</span>
             </div>
           </aside>
           <div class="showcase">
@@ -101,7 +97,7 @@
                 <span class="tiny">CLASIFICATORIA</span><strong>Maestro</strong
                 ><img id="rank-emblem" alt="Emblema de Maestro" /><span
                   class="achievement-note"
-                  >Solo/Dúo · 79 PL <span>↗</span></span
+                  >Solo/Dúo <span>↗</span></span
                 >
               </button>
               <div class="achievement">
@@ -195,40 +191,7 @@
           </p>
         </section>
       </section>
-      <section class="below-profile">
-        <div>
-          <span class="eyebrow">HECHO A TU MEDIDA</span>
-          <h2>Tu santuario, tus reglas.</h2>
-          <p>
-            Elegí un campeón. Encontrá tu aspecto. Hacé que cada detalle hable
-            de vos.
-          </p>
-        </div>
-        <button class="button" id="open-collection">
-          Explorar la colección <span>↗</span>
-        </button>
-      </section>
-      <section class="explore" id="explorar">
-        <div class="explore-symbol" aria-hidden="true">⌕</div>
-        <div>
-          <span class="eyebrow">EL PRÓXIMO CAPÍTULO</span>
-          <h2>La Grieta tiene más historias.</h2>
-          <p>
-            Buscá invocadores de LAS, explorá sus estadísticas y reviví su
-            historial de partidas.
-          </p>
-          <div class="future-search">
-            <span>Nombre de invocador #LAS</span><span>⌕</span>
-          </div>
-          <span class="development"><span></span> EN DESARROLLO</span>
-          <p class="future-note">
-            El buscador, las cuentas y las estadísticas en vivo llegarán en una
-            próxima etapa.
-          </p>
-        </div>
-        <span class="chapter">02 / PRÓXIMAMENTE</span>
-      </section>
-    </main>
+      <section id="live-profile" hidden></section><section class="below-profile" id="history"><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Historial de partidas</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section></main>
     <footer>
       <a class="footer-brand" href="#perfil">◈ RIFT SANCTUM</a>
       <p>Creado por German Bartoli · Con la colaboración de Codex</p>
@@ -280,7 +243,7 @@
               Íconos</button
             ><button role="tab" data-tab="frames" aria-selected="false">
               Marcos
-            </button>
+            </button><button role="tab" data-tab="honors" aria-selected="false">Honor</button><button role="tab" data-tab="trophies" aria-selected="false">Trofeos</button><button role="tab" data-tab="banners" aria-selected="false">Estandartes</button>
           </div>
           <div class="collection-tools">
             <label class="search-field"

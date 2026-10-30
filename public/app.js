@@ -14,8 +14,8 @@ let catalog,
   page = 1;
 const pageSize = 24;
 let opener, toastTimer;
-const typeKey = { backgrounds: "background", icons: "icon", frames: "frame" };
-const labels = { backgrounds: "fondos", icons: "íconos", frames: "marcos" };
+const typeKey = { backgrounds: "background", icons: "icon", frames: "frame", honors: "honor", trophies: "trophy", banners: "banner" };
+const labels = { backgrounds: "fondos", icons: "íconos", frames: "marcos", honors: "niveles de honor", trophies: "trofeos", banners: "estandartes" };
 
 function toast(message) {
   clearTimeout(toastTimer);
@@ -49,6 +49,13 @@ function applyAppearance(value, previewOnly = false) {
     $("#profile-icon").src = icon.image;
     $("#profile-frame").src = frame.image;
     $("#profile-frame").alt = frame.name;
+  }
+  if (!previewOnly) for (const [collection, key, selector] of [["honors","honor","#honor-art"],["trophies","trophy",".cup-art"],["banners","banner",".banner-art"]]) {
+    const item = getItem(collection, value[key]);
+    const art = $(selector); art.replaceChildren();
+    const image = document.createElement("img"); image.src = item.image; image.alt = item.name;
+    image.style.cssText = "position:static;width:100%;height:110px;object-fit:contain";
+    art.append(image); art.parentElement.querySelector("strong").textContent = item.name;
   }
   $("#preview-background").style.backgroundImage = `url("${background.image}")`;
   $("#preview-icon").src = icon.image;
@@ -302,9 +309,6 @@ $("#customize").addEventListener("click", (event) =>
 $("#change-identity").addEventListener("click", (event) =>
   openCustomizer("icons", event.currentTarget),
 );
-$("#open-collection").addEventListener("click", (event) =>
-  openCustomizer("backgrounds", event.currentTarget),
-);
 $("#close-customizer").addEventListener("click", () => dialog.close());
 dialog.addEventListener("close", () => opener?.focus());
 dialog.addEventListener("click", (event) => {
@@ -330,8 +334,8 @@ document.querySelectorAll("[data-tab]").forEach((button) => {
       event.key === "Home"
         ? 0
         : event.key === "End"
-          ? 2
-          : (index + (event.key === "ArrowRight" ? 1 : -1) + 3) % 3;
+          ? tabs.length - 1
+          : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
     setTab(tabs[index].dataset.tab);
     tabs[index].focus();
   });
@@ -386,6 +390,8 @@ async function initialize() {
     appearance = validateAppearance(saved, catalog);
     applyAppearance(appearance);
     renderDetails();
+    applyAppearance(appearance);
+    document.dispatchEvent(new CustomEvent("sanctum-ready", { detail: catalog }));
     const champions = [
       ...new Set(
         catalog.backgrounds.map((item) => item.champion).filter(Boolean),
@@ -403,3 +409,7 @@ async function initialize() {
   }
 }
 initialize();
+
+for (const [selector, tab] of [["#honor-art","honors"],[".cup-art","trophies"],[".banner-art","banners"]]) {
+ const card=$(selector).parentElement; const button=document.createElement("button"); button.className="text-button"; button.textContent="Personalizar"; button.onclick=()=>openCustomizer(tab,button); card.append(button);
+}
