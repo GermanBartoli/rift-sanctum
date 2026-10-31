@@ -1,3 +1,9 @@
+# Publicación en dos plataformas
+
+La configuración vigente se describe en [PUBLICACION.md](PUBLICACION.md). Cada push a main publica en Cloudflare y GitHub Pages después de las verificaciones.
+
+## Referencia anterior
+
 # Publicación automática
 
 `.github/workflows/cloudflare.yml` publica cada push a `main` en el proyecto Cloudflare Pages `rift-sanctum`. Primero verifica el acceso al proyecto y luego ejecuta `npm ci`, `npm test` y `npm run build`; si fallan, no publica. Usa `cloudflare/wrangler-action@v4`, que incluye Wrangler 4. Wrangler incluye `functions/` junto con `dist/`. También admite ejecución manual desde Actions.

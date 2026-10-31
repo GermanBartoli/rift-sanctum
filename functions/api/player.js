@@ -1,6 +1,8 @@
 // La clave permanece exclusivamente en el servidor.
 export async function onRequestGet({request, env}) {
- const reply=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
+ const headers={'Cache-Control':'no-store', Vary:'Origin'};
+ if(request.headers.get('Origin')==='https://germanbartoli.github.io') headers['Access-Control-Allow-Origin']='https://germanbartoli.github.io';
+ const reply=(data,status=200)=>Response.json(data,{status,headers});
  const id=new URL(request.url).searchParams.get('id') || '';
  const parts=id.trim().split('#');
  if(parts.length!==2 || !parts.every(s=>s.trim()) || id.length>50) return reply({error:'Ingresá el Riot ID completo: nombre#tag.'},400);

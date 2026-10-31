@@ -1,54 +1,70 @@
-name: Publicar en Cloudflare Pages
+name: Validar y publicar en Cloudflare y GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: cloudflare-produccion
+  group: publicacion-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  publicar:
+  validar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      - name: Verificar acceso a Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          node-version: 24
+      - name: Verificar y compilar
         run: |
-          node --input-type=module <<'NODE'
-          const token = process.env.CLOUDFLARE_API_TOKEN?.trim();
-          const account = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
-          if (!token || !account) {
-            console.error('::error::Faltan los secretos CLOUDFLARE_API_TOKEN o CLOUDFLARE_ACCOUNT_ID.');
-            process.exit(1);
-          }
-          if (!/^[a-f0-9]{32}$/i.test(account)) {
-            console.error('::error::CLOUDFLARE_ACCOUNT_ID debe contener el ID de cuenta de 32 caracteres.');
-            process.exit(1);
-          }
-          const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/rift-sanctum`, {
-            headers: { Authorization: `Bearer ${token}` },
-            signal: AbortSignal.timeout(30000),
-          });
-          const data = await response.json();
-          if (!response.ok || !data.success) {
-            console.error('::error::Cloudflare rechazó el acceso a rift-sanctum. Revisar el token, su vigencia, el permiso Account / Cloudflare Pages / Edit y que CLOUDFLARE_ACCOUNT_ID corresponda a la cuenta del proyecto.');
-            process.exit(1);
-          }
-          console.log('Acceso al proyecto Cloudflare Pages verificado.');
-          NODE
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
-      - name: Publicar sitio y funciones
+          npm ci
+          npm test
+          npm run build
+      - name: Preparar GitHub Pages
+        run: node scripts/preparar-github-pages.mjs rift-sanctum https://rift-sanctum.pages.dev
+      - name: Guardar compilación de Cloudflare
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare
+          path: dist
+          include-hidden-files: true
+      - name: Guardar compilación de GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-github
+  cloudflare:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: cloudflare
+          path: dist
+      - name: Publicar en Cloudflare Pages
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=rift-sanctum --branch=main
+          command: pages deploy dist --project-name=rift-sanctum --branch=main --commit-hash=${{ github.sha }}
+  github-pages:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
