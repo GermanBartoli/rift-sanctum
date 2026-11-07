@@ -6,11 +6,12 @@ suggestions();
 document.addEventListener('sanctum-ready',e=>{catalog=e.detail;});
 function selectLive(live){
  $('#perfil').hidden=live; $('#live-profile').hidden=!live; $('#customize').hidden=live;
+ $('#history').hidden=!live; $('footer').hidden=!live;
  $('#my-tab').classList.toggle('active',!live);$('#live-tab').classList.toggle('active',live);
  renderMatches(live?current?.matches:null);
 }
 $('#my-tab').onclick=e=>{e.preventDefault();selectLive(false);};
-$('#live-tab').onclick=e=>{e.preventDefault();if(current)selectLive(true);else $('#riot-id').focus();};
+$('#live-tab').onclick=e=>{e.preventDefault();selectLive(true);if(!current)$('#riot-id').focus();};
 function renderMatches(matches){
  $('#matches').replaceChildren(); $('#history-status').textContent=matches ? (matches.length?'Últimas partidas · LAS · Actualizadas al consultar':'No hay partidas recientes.') : 'Buscá un Riot ID para consultar sus últimas partidas.';
  for(const m of matches || []) {const row=document.createElement('article');row.className='match-row';for(const text of [m.win?'Victoria':'Derrota',m.champion,`${m.kills} / ${m.deaths} / ${m.assists}`,m.mode,`${Math.floor(m.duration/60)} min`,new Date(m.date).toLocaleDateString('es-AR')]){const span=document.createElement('span');span.textContent=text;row.append(span);}$('#matches').append(row);}
@@ -41,6 +42,7 @@ function renderPlayer(data){
 }
 $('#riot-search').onsubmit=async e=>{
  e.preventDefault();if(busy || !catalog)return;busy=true;const button=e.currentTarget.querySelector('button');button.disabled=true;
+ selectLive(true);
  $('#history-status').textContent='Consultando Riot…';
  try {const response=await fetch('/api/player?id='+encodeURIComponent($('#riot-id').value.trim()));const type=response.headers.get('content-type') || '';if(!type.includes('json'))throw Error('La consulta requiere el servidor de Cloudflare Pages.');const data=await response.json();if(!response.ok)throw Error(data.error);current=data;renderPlayer(data);recent=[data.name,...recent.filter(n=>n!==data.name)].slice(0,15);suggestions();try{localStorage.setItem('rift:recent',JSON.stringify(recent));}catch{}}
  catch(error){$('#history-status').textContent=error.message;$('#history').scrollIntoView({behavior:'smooth',block:'nearest'});}
