@@ -1773,3 +1773,8 @@ select {
   #perfil .profile-layout { min-height: calc(100svh - 146px); }
   #perfil .identity { min-height: 0; }
 }
+
+/* Oculta el estandarte de fondo cuando la identidad pasa a una fila ancha. */
+@media (max-width: 760px) {
+  .sanctum .identity { background-image: none !important; }
+}
