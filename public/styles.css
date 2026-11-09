@@ -1776,7 +1776,8 @@ html { scrollbar-gutter: stable; }
 #customize.inactive { visibility: hidden; pointer-events: none; }
 .identity h1 { max-width: 100%; overflow-wrap: anywhere; }
 .identity-tag { color: #a4b4c9; font-size: 12px; margin-top: 4px; }
-.search-guide { max-width: 1500px; margin: auto; min-height: calc(100svh - 94px); padding: clamp(36px, 6vw, 96px) 4%; display: grid; align-content: center; gap: 48px; background: radial-gradient(ellipse at 15% 35%, #39204c55, transparent 65%); }
+/* El fondo ocupa todo el ancho; el contenido conserva sus márgenes centrados. */
+.search-guide { margin: auto; min-height: calc(100svh - 94px); padding: clamp(36px, 6vw, 96px) max(4%, calc((100% - 1500px) / 2 + 4%)); display: grid; align-content: center; gap: 48px; background: radial-gradient(ellipse at 15% 35%, #39204c55, transparent 65%); }
 .guide-intro { max-width: 800px; }
 .guide-intro h1 { font-size: clamp(36px, 5vw, 64px); margin: 20px 0; }
 .guide-intro > p { color: #a4b4c9; line-height: 1.8; }
