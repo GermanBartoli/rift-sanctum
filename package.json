@@ -1,6 +1,6 @@
 {
   "name": "rift-sanctum",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "private": true,
   "type": "module",
   "description": "Tu identidad, tu legado. Un santuario personal de League of Legends.",
@@ -13,5 +13,5 @@
   "engines": {
     "node": ">=22"
   },
-  "packageManager": "pnpm@11.25.0"
+  "packageManager": "pnpm@12.18.0"
 }
