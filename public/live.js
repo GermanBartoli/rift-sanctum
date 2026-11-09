@@ -8,12 +8,12 @@ function selectLive(live){
  $('#perfil').hidden=live; $('#live-profile').hidden=!live; $('#customize').hidden=live;
  $('#history').hidden=!live; $('footer').hidden=!live;
  $('#my-tab').classList.toggle('active',!live);$('#live-tab').classList.toggle('active',live);
- renderMatches(live?current?.matches:null);
+ renderMatches(live?current?.matches:null,live?current?.warnings:[]);
 }
 $('#my-tab').onclick=e=>{e.preventDefault();selectLive(false);};
 $('#live-tab').onclick=e=>{e.preventDefault();selectLive(true);if(!current)$('#riot-id').focus();};
-function renderMatches(matches){
- $('#matches').replaceChildren(); $('#history-status').textContent=matches ? (matches.length?'Últimas partidas · LAS · Actualizadas al consultar':'No hay partidas recientes.') : 'Buscá un Riot ID para consultar sus últimas partidas.';
+function renderMatches(matches,warnings=[]){
+ $('#matches').replaceChildren(); $('#history-status').textContent=warnings.length?warnings.join(' '):matches ? (matches.length?'Últimas partidas · LAS · Actualizadas al consultar':'No hay partidas recientes.') : 'Buscá un Riot ID para consultar sus últimas partidas.';
  for(const m of matches || []) {const row=document.createElement('article');row.className='match-row';for(const text of [m.win?'Victoria':'Derrota',m.champion,`${m.kills} / ${m.deaths} / ${m.assists}`,m.mode,`${Math.floor(m.duration/60)} min`,new Date(m.date).toLocaleDateString('es-AR')]){const span=document.createElement('span');span.textContent=text;row.append(span);}$('#matches').append(row);}
 }
 function renderPlayer(data){
