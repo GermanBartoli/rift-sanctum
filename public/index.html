@@ -34,7 +34,7 @@
         ></a
       >
       <nav aria-label="Principal">
-        <a class="active" id="my-tab" href="#perfil">MI SANTUARIO</a><a id="live-tab" href="#buscar">TU SANTUARIO</a></nav><form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" list="recent-players" required maxlength="50"><datalist id="recent-players"></datalist><button class="button small">Buscar</button></form>
+        <a class="active" id="my-tab" href="#perfil">MI SANTUARIO</a><a id="live-tab" href="#buscar">TU SANTUARIO</a></nav>
       <button class="button small" id="customize">
         ✧ <span>Personalizar perfil</span>
       </button>
@@ -192,7 +192,18 @@
           </p>
         </section>
       </section>
-      <section id="live-profile" hidden></section><section class="below-profile" id="history" hidden><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Historial de partidas</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section></main>
+      <section id="search-guide" class="search-guide" hidden aria-labelledby="guide-title">
+        <div class="guide-intro"><span class="eyebrow">TU IDENTIDAD. TU LEGADO.</span>
+        <h1 id="guide-title">Tu propio santuario</h1>
+        <p>Buscá tu perfil de League of Legends o explorá el de otro invocador de LAS.</p>
+        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" list="recent-players" required maxlength="50"><datalist id="recent-players"></datalist><button class="button small">Buscar</button></form>
+        <p class="guide-hint">Ingresá el Riot ID completo: nombre#tag · Región LAS</p></div>
+        <div class="guide-steps">
+          <article><span class="eyebrow">01 · ENCONTRÁ TU PERFIL</span><h2>Tu historia en la Grieta</h2><p>Consultá tu nivel, rangos, campeones con mayor maestría y últimas partidas.</p></article>
+          <article><span class="eyebrow">02 · EXPLORÁ TUS LOGROS</span><h2>Un santuario interactivo</h2><p>Pasá el cursor o tocá los emblemas de clasificatoria y maestría para ver sus detalles.</p></article>
+          <article><span class="eyebrow">03 · HACÉLO TUYO</span><h2>Dale tu estilo</h2><p>Elegí fondos, íconos y marcos. Completá honor, trofeo y estandarte manualmente: Riot no publica esos datos. Los cambios se guardan en este navegador.</p></article>
+        </div>
+      </section><section id="live-profile" hidden></section><section class="below-profile" id="history" hidden><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Historial de partidas</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section></main>
     <footer hidden>
       <a class="footer-brand" href="#perfil">◈ RIFT SANCTUM</a>
       <p>Creado por German Bartoli · Con la colaboración de Codex</p>

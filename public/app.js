@@ -13,7 +13,7 @@ let catalog,
   activeTab = "backgrounds",
   page = 1;
 const pageSize = 24;
-let opener, toastTimer;
+let opener, toastTimer, externalEditor, editedFields = new Set(), externalReset = false;
 const typeKey = { profileBanners: "profileBanner", backgrounds: "background", icons: "icon", frames: "frame", honors: "honor", trophies: "trophy", banners: "banner" };
 const labels = { profileBanners: "banners de perfil", backgrounds: "fondos", icons: "íconos", frames: "marcos", honors: "niveles de honor", trophies: "trofeos", banners: "estandartes" };
 
@@ -34,16 +34,14 @@ function getItem(collection, id) {
 }
 
 // Calcula el encuadre visible sin los márgenes transparentes del recurso de Riot.
-let bannerActual;
-function ajustarBanner(url) {
-  const identity = $(".identity");
-  bannerActual = url;
+export function ajustarBanner(url, identity = $(".identity")) {
+  identity.dataset.bannerActual = url;
   identity.style.backgroundImage = `url("${url}")`;
   identity.style.backgroundSize = "148% 104%";
   const image = new Image();
   image.crossOrigin = "anonymous";
   image.onload = () => {
-    if (bannerActual !== url) return;
+    if (identity.dataset.bannerActual !== url) return;
     try {
       const canvas = document.createElement("canvas");
       canvas.width = 145;
@@ -242,6 +240,7 @@ function renderCollection() {
     button.append(img, label);
     button.addEventListener("click", () => {
       draft[typeKey[activeTab]] = String(item.id);
+      editedFields.add(typeKey[activeTab]);
       applyAppearance(draft, true);
       grid
         .querySelectorAll("[aria-pressed]")
@@ -276,7 +275,10 @@ function setTab(tab) {
   renderCollection();
 }
 
-function openCustomizer(tab, trigger) {
+export function openCustomizer(tab, trigger, editor = null) {
+  externalEditor = editor;
+  editedFields = new Set();
+  externalReset = false;
   if (!catalog) {
     toast(
       "La colección todavía está cargando. Intentá de nuevo en unos segundos.",
@@ -285,7 +287,9 @@ function openCustomizer(tab, trigger) {
   }
   closePanels();
   opener = trigger;
-  draft = { ...appearance };
+  draft = { ...(editor?.appearance || appearance) };
+  $(".preview-identity h3").textContent = editor?.name || profile.name;
+  $(".preview-portrait .level").textContent = editor?.level || profile.level;
   applyAppearance(draft, true);
   setTab(tab);
   dialog.showModal();
@@ -395,12 +399,20 @@ $("#next-page").addEventListener("click", () => {
   renderCollection();
 });
 $("#reset-profile").addEventListener("click", () => {
-  draft = validateAppearance({}, catalog);
+  draft = validateAppearance(externalEditor?.defaults || {}, catalog);
+  externalReset = Boolean(externalEditor);
+  editedFields.clear();
   applyAppearance(draft, true);
   renderCollection();
   toast("Original restaurado en la vista previa. Guardá para aplicar.");
 });
 $("#save-profile").addEventListener("click", () => {
+  if (externalEditor) {
+    const saved = externalEditor.save(validateAppearance(draft, catalog), editedFields, externalReset);
+    toast(saved ? "Personalización guardada para este perfil en este navegador." : "Cambios aplicados. El navegador no permitió guardarlos para la próxima visita.");
+    dialog.close();
+    return;
+  }
   appearance = validateAppearance(draft, catalog);
   applyAppearance(appearance);
   try {
