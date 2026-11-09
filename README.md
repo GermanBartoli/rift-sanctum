@@ -50,14 +50,14 @@ Los recursos del perfil original se incluyen localmente. El resto de la colecci�
 Requiere **Node.js 22 o superior**. No hace falta instalar paquetes para ejecutar el proyecto.
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Abrí `http://127.0.0.1:4173`. Para verificar y generar la versión publicable:
 
 ```bash
-npm test
-npm run build
+pnpm test
+pnpm run build
 ```
 
 El sitio terminado queda en `dist/`.
@@ -88,9 +88,9 @@ docs/
 ## Actualizar el catálogo
 
 ```bash
-npm run catalog
-npm test
-npm run build
+pnpm run catalog
+pnpm test
+pnpm run build
 ```
 
 El proceso necesita Internet y descarga recursos públicos, sin claves de Riot. La compilación habitual usa el catálogo versionado y no depende de descargarlo de nuevo. Revisá los cambios del JSON y los recursos antes de publicarlos.
@@ -115,7 +115,7 @@ Rift Sanctum es un proyecto de fans independiente y no está afiliado ni respald
 
 Honor, trofeos y estandartes se eligen desde el personalizador y se guardan junto con el fondo, icono y marco. Los marcos locales están recortados a su área visible. El inicio ocupa al menos la altura disponible de la ventana.
 
-Para publicar con la sesión de Cloudflare autenticada: `npx wrangler pages deploy dist --project-name rift-sanctum`. La carpeta `functions` debe permanecer junto a `dist` al ejecutar el comando.
+Para publicar con la sesión de Cloudflare autenticada: `pnpm dlx wrangler pages deploy dist --project-name rift-sanctum`. La carpeta `functions` debe permanecer junto a `dist` al ejecutar el comando.
 
 ## Perfiles consultados y personalización actual
 
