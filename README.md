@@ -1,5 +1,24 @@
 # Rift Sanctum
 
+**Un santuario de League of Legends para explorar perfiles de LAS y personalizar su presentación.**
+
+[![Repositorio](https://img.shields.io/badge/GitHub-GermanBartoli-181717?logo=github)](https://github.com/GermanBartoli/rift-sanctum)
+[![Verificaciones](https://github.com/GermanBartoli/rift-sanctum/actions/workflows/cloudflare.yml/badge.svg)](https://github.com/GermanBartoli/rift-sanctum/actions/workflows/cloudflare.yml)
+
+[Abrir sitio](https://rift-sanctum.pages.dev/) · [Empezar](#primeros-pasos) · [Mapa del repositorio](#mapa-del-repositorio) · [Autoría](#autoría-de-esta-documentación)
+
+![Vista del proyecto: Rift Sanctum](docs/images/vista-actual.jpg)
+
+*Captura de la página publicada, tomada el 9 de noviembre de 2026. Conservada sin redimensionar ni recomprimir.*
+
+## Primeros pasos
+
+1. Abrí **Mi santuario** para ver el perfil original de referencia.
+2. En **Tu santuario**, ingresá un Riot ID completo como `KillerBiss#2013` y pulsá Buscar.
+3. Explorá los emblemas de rango y maestría y abrí Personalizar perfil. Los cambios de apariencia se guardan en este navegador y no modifican la cuenta de Riot.
+
+## Referencia y detalles
+
 **Tu identidad. Tu legado. Tu lugar en la Grieta.**
 
 [Abrir Rift Sanctum](https://rift-sanctum.pages.dev/) · [Repositorio público](https://github.com/GermanBartoli/rift-sanctum)
@@ -78,9 +97,9 @@ El proceso necesita Internet y descarga recursos públicos, sin claves de Riot. 
 
 ## Alcance de esta versión
 
-Los rangos, maestrías, honor y nivel son una transcripción de las capturas del 29 de octubre de 2026; **no se sincronizan en tiempo real**. La personalización afecta la apariencia de este sitio y se guarda por navegador: no modifica el cliente de League of Legends ni la cuenta de Riot, y no se comparte todavía con otros visitantes.
+Los rangos, maestrías, honor y nivel de **Mi santuario** son una transcripción de las capturas del 29 de octubre de 2026; **no se sincronizan en tiempo real**. La personalización afecta la apariencia de este sitio y se guarda por navegador: no modifica el cliente de League of Legends ni la cuenta de Riot, y no se comparte todavía con otros visitantes.
 
-La solapa **Tu Santuario** consulta Riot ID completos en LAS mediante `functions/api/player.js`. Requiere configurar `RIOT_API_KEY` como secreto de Cloudflare Pages. Sin esa clave, muestra conexión pendiente. Las sugerencias corresponden a las últimas cuentas consultadas en este navegador: Riot no ofrece búsqueda global por coincidencias parciales. El historial muestra las últimas cinco partidas al consultar; no se actualiza automáticamente. Honor, trofeos y estandartes no están disponibles en la API y se indican como tales. Mi Santuario conserva sus datos de referencia y su personalización local.
+La solapa **Tu Santuario** consulta Riot ID completos en LAS mediante `functions/api/player.js`. Requiere configurar `RIOT_API_KEY` como secreto de Cloudflare Pages. Sin esa clave, muestra conexión pendiente. Las sugerencias corresponden a las últimas cuentas consultadas en este navegador: Riot no ofrece búsqueda global por coincidencias parciales. El historial muestra las últimas cinco partidas al consultar; no se actualiza automáticamente. Honor, trofeos y estandartes no están disponibles en la API: se pueden completar manualmente desde el personalizador, sin presentarlos como datos verificados por Riot. Mi Santuario conserva sus datos de referencia y su personalización local.
 
 ## Publicación
 
@@ -97,3 +116,22 @@ Rift Sanctum es un proyecto de fans independiente y no está afiliado ni respald
 Honor, trofeos y estandartes se eligen desde el personalizador y se guardan junto con el fondo, icono y marco. Los marcos locales están recortados a su área visible. El inicio ocupa al menos la altura disponible de la ventana.
 
 Para publicar con la sesión de Cloudflare autenticada: `npx wrangler pages deploy dist --project-name rift-sanctum`. La carpeta `functions` debe permanecer junto a `dist` al ejecutar el comando.
+
+## Perfiles consultados y personalización actual
+
+Tu santuario reúne la guía de búsqueda, el perfil consultado y sus últimas partidas. Los emblemas de clasificatoria y maestría permiten explorar detalles. La apariencia se guarda por jugador en este navegador; cambiar fondo, ícono o marco no modifica Riot. Si parte del historial falla, el perfil y las partidas recuperadas se conservan y se informa la advertencia.
+
+
+## Mapa del repositorio
+
+- [package.json](<package.json>)
+- [public/index.html](<public/index.html>)
+- [docs/PUBLICACION.md](<docs/PUBLICACION.md>)
+- [docs/arquitectura.md](<docs/arquitectura.md>)
+- [docs/despliegue.md](<docs/despliegue.md>)
+
+## Autoría de esta documentación
+
+Repositorio mantenido por [Germán Bartoli](https://github.com/GermanBartoli). Guía revisada y actualizada con **Codex**, coautor de esta actualización documental. Los autores, colaboradores, licencias y recursos de terceros conservan sus créditos originales.
+
+Los commits de esta revisión incluyen `Co-authored-by: Codex <noreply@openai.com>`; esta atribución no modifica la autoría del historial anterior.
