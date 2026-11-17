@@ -98,10 +98,6 @@ function applyAppearance(value, previewOnly = false) {
 
 function renderDetails() {
   $("#rank-emblem").src = catalog.assets.master;
-  const rankArt = document.createElement("div");
-  rankArt.className = "rank-art";
-  $("#rank-emblem").before(rankArt);
-  rankArt.append($("#rank-emblem"));
   $("#mastery-icon").src = catalog.assets.missFortune;
   for (const [selector, keys] of [
     [".cup-art", ["trophy", "pedestal"]],
@@ -117,7 +113,7 @@ function renderDetails() {
       art.append(img);
     }
   }
-  const masteryArt = document.createElement("img");
+  const masteryArt = $(".mastery-decoration");
   masteryArt.src = catalog.assets.mastery;
   masteryArt.alt = "";
   masteryArt.className = "mastery-decoration";

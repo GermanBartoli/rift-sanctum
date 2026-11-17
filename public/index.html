@@ -10,6 +10,7 @@
     />
     <meta name="theme-color" content="#080e17" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="image" href="/assets/background.jpg" fetchpriority="high" />
     <link rel="stylesheet" href="/styles.css" />
     <script type="module" src="/live.js"></script><script type="module" src="/app.js"></script>
     <meta property="og:type" content="website" />
@@ -43,7 +44,7 @@
       <section class="sanctum" id="perfil" aria-label="Perfil de KillerBiss">
         <img
           class="backdrop"
-          id="backdrop"
+          id="backdrop" src="/assets/background.jpg" fetchpriority="high"
           alt="Ilustración de fondo del perfil"
         />
         <div class="shade"></div>
@@ -55,20 +56,20 @@
           >
         </div>
         <div class="profile-layout">
-          <aside class="identity">
+          <aside class="identity" style="background-image:url('https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/regalia/bannerskins/master.png');background-size:148% 104%">
             <span class="eyebrow">EL SANTUARIO DE</span>
             <button
               id="change-identity"
-              class="portrait"
+              class="portrait" data-frame-type="ranked"
               aria-label="Cambiar ícono y marco"
             >
               <img
                 class="profile-icon"
-                id="profile-icon"
+                id="profile-icon" src="/assets/icon.jpg"
                 alt="Ícono de KillerBiss"
               /><img
                 class="profile-frame"
-                id="profile-frame"
+                id="profile-frame" src="/assets/frames/master.png" data-frame-type="ranked"
                 alt="Marco de perfil"
               /><span class="level">414</span
               ><span class="portrait-edit">✧ Personalizar</span>
@@ -102,14 +103,14 @@
                 aria-expanded="false"
               >
                 <span class="tiny">CLASIFICATORIA</span><strong>Maestro</strong
-                ><img id="rank-emblem" alt="Emblema de Maestro" /><span
+                ><div class="rank-art"><img id="rank-emblem" src="/assets/master.png" alt="Emblema de Maestro" /></div><span
                   class="achievement-note"
                   >Solo/Dúo</span
                 >
               </button>
               <button type="button" class="achievement interactive">
                 <span class="tiny">HONOR</span><strong>Nivel 5</strong>
-                <div id="honor-art" class="honor-art" aria-hidden="true">✺</div><span class="achievement-note">Respeto en la Grieta</span></button>
+                <div id="honor-art" class="honor-art" aria-hidden="true"><img src="/assets/honor.png" alt="" style="position:static;width:100%;height:110px;object-fit:contain" /></div><span class="achievement-note">Respeto en la Grieta</span></button>
               <button
                 class="achievement interactive"
                 id="mastery-trigger"
@@ -118,7 +119,7 @@
               >
                 <span class="tiny">MAESTRÍA TOTAL</span><strong>654</strong>
                 <div class="mastery-medal">
-                  <img id="mastery-icon" alt="Miss Fortune" /><span>78</span>
+                  <img class="mastery-decoration" src="/assets/mastery.png" alt="" /><img id="mastery-icon" src="/assets/missFortune.png" alt="Miss Fortune" /><span>78</span>
                 </div>
                 <span class="achievement-note"
                   >Tu legado de campeón</span
@@ -126,10 +127,10 @@
               </button>
               <button type="button" class="achievement interactive">
                 <span class="tiny">COPA DEMACIA</span><strong>Nivel III</strong>
-                <div class="cup-art" aria-hidden="true">♜</div><span class="achievement-note">Equipo de 8</span></button>
+                <div class="cup-art" aria-hidden="true"><img src="/assets/trophy.png" alt="" style="position:static;width:100%;height:110px;object-fit:contain" /></div><span class="achievement-note">Equipo de 8</span></button>
               <button type="button" class="achievement interactive">
                 <span class="tiny">ESTANDARTE</span><strong>El Vacío</strong>
-                <div class="banner-art" aria-hidden="true"><span>✧</span></div><span class="achievement-note">Una identidad única</span></button>
+                <div class="banner-art" aria-hidden="true"><img src="/assets/voidBanner.png" alt="" style="position:static;width:100%;height:110px;object-fit:contain" /></div><span class="achievement-note">Una identidad única</span></button>
             </div>
             <div class="showcase-foot">
               <span>PERFIL ORIGINAL · 29 OCT 2026</span>
