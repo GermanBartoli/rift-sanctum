@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -118,14 +119,24 @@ assets.eternalSupport = `${game}assets/loadouts/statstones/categories/lcu/ss_ico
 assets.eternalGoal = `${game}assets/loadouts/statstones/categories/lcu/ss_icon_goal_common_3.png`;
 await mkdir(path.join(root, "public/assets"), { recursive: true });
 await mkdir(path.join(root, "public/data"), { recursive: true });
+const variantesVerificadas = new Map([
+  ["92a9d18f27bac20e273b089eba14e5cc5e5e46d74a5b67afc6926426eb9b3783", "/assets/honor.webp"],
+  ["e95f9d5983cbc2160c27cd68b3ff0c6981e83908da02086d3452a2a2f5c656eb", "/assets/frames/master.webp"],
+  ["41895e7e9026521b1b51912c040910dacfd735802c3437aca258b3cd4ecd370d", "/assets/master.webp"],
+  ["edafbe38d40268e4facb5678e155e8ed7ce5d44fd8893cbdd50aaff7fc555eac", "/assets/mastery.webp"],
+  ["7b41eb0b40c4194329e3c02dacebe4e048d65edc9b8ef678ab84e8d47d0344c3", "/assets/voidBanner.webp"],
+]);
+
+function rutaOptimizada(bytes, original) {
+  return variantesVerificadas.get(createHash("sha256").update(bytes).digest("hex")) ?? original;
+}
+
 for (const [key, url] of Object.entries(assets)) {
   const extension = path.extname(new URL(url).pathname);
   const local = `/assets/${key}${extension}`;
-  await writeFile(
-    path.join(root, "public", local),
-    Buffer.from(await (await request(url)).arrayBuffer()),
-  );
-  assets[key] = local;
+  const bytes = Buffer.from(await (await request(url)).arrayBuffer());
+  await writeFile(path.join(root, "public", local), bytes);
+  assets[key] = rutaOptimizada(bytes, local);
 }
 const defaults = { background: "21069", icon: "7167", frame: "master" };
 for (const [list, id, filename] of [
@@ -134,11 +145,9 @@ for (const [list, id, filename] of [
   [frames, defaults.frame, "frame.png"],
 ]) {
   const selected = list.find((item) => item.id === id);
-  await writeFile(
-    path.join(root, "public/assets", filename),
-    Buffer.from(await (await request(selected.image)).arrayBuffer()),
-  );
-  selected.image = `/assets/${filename}`;
+  const bytes = Buffer.from(await (await request(selected.image)).arrayBuffer());
+  await writeFile(path.join(root, "public/assets", filename), bytes);
+  selected.image = rutaOptimizada(bytes, `/assets/${filename}`);
 }
 // Conserva las colecciones complementarias al regenerar los recursos principales.
 const previous = JSON.parse(await readFile(path.join(root, "public/data/catalog.json"), "utf8"));
