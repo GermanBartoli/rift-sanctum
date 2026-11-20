@@ -1794,3 +1794,14 @@ html { scrollbar-gutter: stable; }
 .search-guide.has-profile h1 { font-size: 28px; margin: 0; }
 .remote-mastery .mastery-columns { grid-template-columns: 1fr; }
 @media(max-width:760px) { .guide-steps { grid-template-columns: 1fr; } .topbar { gap: 12px; } #customize { min-width: 0; } }
+
+.error-coleccion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}

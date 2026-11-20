@@ -276,6 +276,10 @@ export function openCustomizer(tab, trigger, editor = null) {
   editedFields = new Set();
   externalReset = false;
   if (!catalog) {
+    if (!$("#error-coleccion").hidden) {
+      $("#reintentar-coleccion").focus();
+      return;
+    }
     toast(
       "La colección todavía está cargando. Intentá de nuevo en unos segundos.",
     );
@@ -426,7 +430,17 @@ $("#save-profile").addEventListener("click", () => {
   dialog.close();
 });
 
+let cargandoColeccion = false;
 async function initialize() {
+  if (cargandoColeccion) return;
+  cargandoColeccion = true;
+  const aviso = $("#error-coleccion");
+  const estado = $("#estado-coleccion");
+  const reintentar = $("#reintentar-coleccion");
+  if (!aviso.hidden) {
+    estado.textContent = "Cargando colección…";
+    reintentar.setAttribute("aria-disabled", "true");
+  }
   try {
     const response = await fetch("/data/catalog.json");
     if (!response.ok) throw new Error("Catálogo no disponible");
@@ -453,11 +467,19 @@ async function initialize() {
       option.textContent = name;
       $("#champion-filter").append(option);
     }
+    if (document.activeElement === reintentar) $("#customize").focus({ preventScroll: true });
+    aviso.hidden = true;
   } catch (error) {
+    catalog = null;
     console.error("No se pudo cargar la colección:", error.message);
-    toast("No se pudo cargar la colección. Recargá la página para reintentar.");
+    aviso.hidden = false;
+    estado.textContent = "No se pudo cargar la colección del perfil. Revisá la conexión y volvé a intentarlo.";
+  } finally {
+    cargandoColeccion = false;
+    reintentar.removeAttribute("aria-disabled");
   }
 }
+$("#reintentar-coleccion").addEventListener("click", initialize);
 initialize();
 
 for (const [selector, tab] of [["#honor-art","honors"],[".cup-art","trophies"],[".banner-art","banners"]]) {
