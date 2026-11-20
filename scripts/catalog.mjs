@@ -120,6 +120,7 @@ assets.eternalGoal = `${game}assets/loadouts/statstones/categories/lcu/ss_icon_g
 await mkdir(path.join(root, "public/assets"), { recursive: true });
 await mkdir(path.join(root, "public/data"), { recursive: true });
 const variantesVerificadas = new Map([
+  ["aec120362205a90e8733f82117cf5c904a9c9b4440f26997284e80bcf446f0ab", "/assets/banner-sin-perdida.webp"],
   ["e95f9d5983cbc2160c27cd68b3ff0c6981e83908da02086d3452a2a2f5c656eb", "/assets/frames/master-sin-perdida.png"],
   ["92a9d18f27bac20e273b089eba14e5cc5e5e46d74a5b67afc6926426eb9b3783", "/assets/honor-sin-perdida.webp"],
   ["41895e7e9026521b1b51912c040910dacfd735802c3437aca258b3cd4ecd370d", "/assets/master-sin-perdida.webp"],
@@ -160,8 +161,11 @@ for (const item of regalia) {
   if (existing) existing.name = item.localizedName || existing.name;
   else profileBanners.push({ id: "regalia-" + item.id, name: item.localizedName || "Banner " + item.id, image });
 }
+const honors = previous.honors.map(item => item.id === "5" ? { ...item, image: assets.honor } : item);
+const bannerMaestro = profileBanners.find(item => item.id === "regalia-bannerskins-pastrank-master");
+if (bannerMaestro) bannerMaestro.image = assets.banner;
 const catalog = {
-  honors: previous.honors, trophies: previous.trophies, banners: previous.banners, profileBanners,
+  honors, trophies: previous.trophies, banners: previous.banners, profileBanners,
   source: "CommunityDragon",
   locale: "es_MX",
   updatedAt: new Date().toISOString(),
