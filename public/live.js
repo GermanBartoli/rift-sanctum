@@ -24,13 +24,40 @@ function selectLive(value) {
   $('footer').hidden = !live;
   $('#my-tab').classList.toggle('active', !live);
   $('#live-tab').classList.toggle('active', live);
+  $(live ? '#live-tab' : '#my-tab').setAttribute('aria-current', 'location');
+  $(live ? '#my-tab' : '#live-tab').removeAttribute('aria-current');
   document.querySelectorAll('.detail-panel').forEach(panel => { panel.hidden = true; });
   document.querySelectorAll('[aria-expanded]').forEach(button => button.setAttribute('aria-expanded', 'false'));
   renderMatches(live ? current?.matches : null, live ? current?.warnings : []);
 }
-$('#my-tab').onclick = event => { event.preventDefault(); selectLive(false); window.scrollTo(0, 0); };
-$('#live-tab').onclick = event => { event.preventDefault(); selectLive(true); window.scrollTo(0, 0); if (!current) $('#riot-id').focus({ preventScroll: true }); };
-if (location.hash === '#search-guide' || location.hash === '#buscar') selectLive(true);
+function mostrarSeccion(hash) {
+  const consulta = hash === '#search-guide' || hash === '#buscar';
+  selectLive(consulta);
+  window.scrollTo(0, 0);
+  if (consulta && !current) $('#riot-id').focus({ preventScroll: true });
+}
+
+for (const enlace of document.querySelectorAll('a[href="#perfil"], #live-tab')) {
+  enlace.addEventListener('click', evento => {
+    if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
+    evento.preventDefault();
+    if (location.hash !== enlace.hash) history.pushState(null, '', enlace.hash);
+    mostrarSeccion(enlace.hash);
+    if (enlace.closest('footer')) $('#my-tab').focus({ preventScroll: true });
+  });
+}
+window.addEventListener('hashchange', () => {
+  if (['', '#perfil', '#search-guide', '#buscar'].includes(location.hash)) mostrarSeccion(location.hash);
+});
+if (location.hash === '#search-guide' || location.hash === '#buscar') mostrarSeccion(location.hash);
+
+$('.skip').addEventListener('click', evento => {
+  if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
+  evento.preventDefault();
+  const contenido = $('#contenido');
+  contenido.focus({ preventScroll: true });
+  contenido.scrollIntoView({ block: 'start', behavior: 'instant' });
+});
 $('#customize').addEventListener('click', event => {
   if (!live) return;
   event.stopImmediatePropagation();

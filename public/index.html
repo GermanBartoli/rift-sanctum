@@ -27,7 +27,7 @@
     <link rel="canonical" href="https://rift-sanctum.pages.dev/" />
   </head>
   <body>
-    <a class="skip" href="#perfil">Ir al perfil</a>
+    <a class="skip" href="#contenido">Ir al contenido</a>
     <header class="topbar">
       <a class="brand" href="#perfil"
         ><img src="/favicon.svg" alt="" /><span
@@ -35,12 +35,12 @@
         ></a
       >
       <nav aria-label="Principal">
-        <a class="active" id="my-tab" href="#perfil">MI SANTUARIO</a><a id="live-tab" href="#search-guide">TU SANTUARIO</a></nav>
+        <a class="active" aria-current="location" id="my-tab" href="#perfil">MI SANTUARIO</a><a id="live-tab" href="#search-guide">TU SANTUARIO</a></nav>
       <button class="button small" id="customize">
         ✧ <span>Personalizar perfil</span>
       </button>
     </header>
-    <main>
+    <main id="contenido" tabindex="-1">
       <div id="error-coleccion" class="error-coleccion" hidden>
         <span id="estado-coleccion" role="status"></span>
         <button id="reintentar-coleccion" class="button small" type="button">Reintentar</button>
