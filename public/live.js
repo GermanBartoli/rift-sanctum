@@ -30,6 +30,7 @@ function selectLive(value) {
 }
 $('#my-tab').onclick = event => { event.preventDefault(); selectLive(false); window.scrollTo(0, 0); };
 $('#live-tab').onclick = event => { event.preventDefault(); selectLive(true); window.scrollTo(0, 0); if (!current) $('#riot-id').focus({ preventScroll: true }); };
+if (location.hash === '#search-guide' || location.hash === '#buscar') selectLive(true);
 $('#customize').addEventListener('click', event => {
   if (!live) return;
   event.stopImmediatePropagation();
@@ -51,6 +52,7 @@ function renderPlayer(data) {
   clone.querySelectorAll('[id]').forEach(element => { element.dataset.originalId = element.id; element.id = `remote-${element.id}`; });
   const q = selector => clone.querySelector(selector);
   const by = id => q(`[data-original-id="${id}"]`);
+  by('change-identity').setAttribute('aria-labelledby', [by('editar-identidad').id, by('nivel-identidad').id].join(' '));
   const image = (src, alt = '', className = '') => { const img = document.createElement('img'); Object.assign(img, { src, alt, className }); return img; };
   const text = (tag, value, className = '') => { const element = document.createElement(tag); element.textContent = value; element.className = className; return element; };
   clone.setAttribute('aria-label', `Santuario de ${data.name}`);
@@ -103,13 +105,30 @@ function renderPlayer(data) {
     trigger.setAttribute('aria-expanded', 'false');
     const open = () => { closePanels(); panel.hidden = false; trigger.setAttribute('aria-expanded', 'true'); };
     const schedule = () => { timer = setTimeout(() => { if (!panel.matches(':hover') && !trigger.matches(':hover') && !panel.contains(document.activeElement) && document.activeElement !== trigger) closePanels(); }, 220); };
-    trigger.onclick = open; trigger.onfocus = open;
+    const cerrar = panel.querySelector('.panel-close');
+    trigger.onclick = evento => {
+      open();
+      if (evento.detail === 0) cerrar.focus();
+    };
     trigger.onpointerenter = event => { if (event.pointerType === 'mouse') open(); };
     trigger.onpointerleave = schedule; trigger.onblur = schedule;
     panel.onpointerenter = () => clearTimeout(timer); panel.onpointerleave = schedule;
-    panel.querySelector('.panel-close').onclick = closePanels;
+    cerrar.onclick = () => {
+      closePanels();
+      trigger.focus({ preventScroll: true });
+    };
+    panel.onfocusout = evento => {
+      if (!panel.contains(evento.relatedTarget) && evento.relatedTarget !== trigger) closePanels();
+    };
   }
-  clone.onkeydown = event => { if (event.key === 'Escape') closePanels(); };
+  clone.onkeydown = evento => {
+    if (evento.key !== 'Escape') return;
+    const panel = clone.querySelector('.detail-panel:not([hidden])');
+    if (!panel) return;
+    const devolverFoco = panel.contains(document.activeElement);
+    closePanels();
+    if (devolverFoco) clone.querySelector('[aria-controls="' + panel.id + '"]').focus({ preventScroll: true });
+  };
   clone.onpointerdown = event => { if (!event.target.closest('.detail-panel, [data-original-id="rank-trigger"], [data-original-id="mastery-trigger"]')) closePanels(); };
   const key = `rift:appearance:${data.name.toLowerCase()}`;
   let saved = {};
@@ -162,7 +181,13 @@ $('#riot-search').onsubmit = async event => {
     const response = await fetch('/api/player?id=' + encodeURIComponent($('#riot-id').value.trim()));
     if (!(response.headers.get('content-type') || '').includes('json')) throw Error('La consulta requiere el servidor de Cloudflare Pages.');
     const data = await response.json(); if (!response.ok) throw Error(data.error);
+    const focoEnBusqueda = $('#riot-search').contains(document.activeElement) || document.activeElement === document.body;
     current = data; renderPlayer(data); window.scrollTo(0, 0);
+    if (focoEnBusqueda) {
+      const titulo = $('#remote-sanctum h1');
+      titulo.tabIndex = -1;
+      titulo.focus({ preventScroll: true });
+    }
     recent = [data.name, ...recent.filter(name => name !== data.name)].slice(0, 15); suggestions();
     try { localStorage.setItem('rift:recent', JSON.stringify(recent)); } catch {}
   } catch (error) { $('#history-status').textContent = error.message; $('#history').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
