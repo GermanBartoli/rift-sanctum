@@ -347,20 +347,24 @@ $("#customize").addEventListener("click", (event) =>
 $("#change-identity").addEventListener("click", (event) =>
   openCustomizer("icons", event.currentTarget),
 );
-$("#close-customizer").addEventListener("click", () => dialog.close());
+if (!("commandForElement" in HTMLButtonElement.prototype)) {
+  $("#close-customizer").addEventListener("click", () => dialog.close());
+}
 dialog.addEventListener("close", () => opener?.focus());
-dialog.addEventListener("click", (event) => {
-  if (event.target === dialog) {
-    const r = dialog.getBoundingClientRect();
-    if (
-      event.clientX < r.left ||
-      event.clientX > r.right ||
-      event.clientY < r.top ||
-      event.clientY > r.bottom
-    )
-      dialog.close();
-  }
-});
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) {
+      const r = dialog.getBoundingClientRect();
+      if (
+        event.clientX < r.left ||
+        event.clientX > r.right ||
+        event.clientY < r.top ||
+        event.clientY > r.bottom
+      )
+        dialog.close();
+    }
+  });
+}
 document.querySelectorAll("[data-tab]").forEach((button) => {
   button.addEventListener("click", () => setTab(button.dataset.tab));
   button.addEventListener("keydown", (event) => {

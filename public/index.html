@@ -214,7 +214,7 @@
         Games.</small
       >
     </footer>
-    <dialog id="customizer" aria-labelledby="customizer-title">
+    <dialog id="customizer" closedby="any" aria-labelledby="customizer-title">
       <div class="dialog-header">
         <div>
           <span class="eyebrow">DALE FORMA A TU LEGADO</span>
@@ -223,6 +223,9 @@
         <button
           class="close-button"
           id="close-customizer"
+          type="button"
+          commandfor="customizer"
+          command="close"
           aria-label="Cerrar personalización"
         >
           ×
