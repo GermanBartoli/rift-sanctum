@@ -330,15 +330,33 @@ for (const [trigger, panel] of panelPairs) {
     if (event.pointerType === "mouse") openPanel(trigger, panel);
   });
   $(trigger).addEventListener("pointerleave", scheduleClose);
-  $(trigger).addEventListener("focus", () => openPanel(trigger, panel));
   $(trigger).addEventListener("blur", scheduleClose);
-  $(trigger).addEventListener("click", () => openPanel(trigger, panel));
+  $(trigger).addEventListener("click", (evento) => {
+    openPanel(trigger, panel);
+    if (evento.detail === 0) $(panel).querySelector(".panel-close").focus();
+  });
   $(panel).addEventListener("pointerenter", () => clearTimeout(hideTimer));
   $(panel).addEventListener("pointerleave", scheduleClose);
-  $(panel).querySelector(".panel-close").addEventListener("click", closePanels);
+  $(panel).querySelector(".panel-close").addEventListener("click", () => {
+    closePanels();
+    $(trigger).focus({ preventScroll: true });
+  });
 }
+document.addEventListener("focusin", (evento) => {
+  for (const [trigger, panel] of panelPairs) {
+    if (!$(panel).hidden && evento.target !== $(trigger) && !$(panel).contains(evento.target)) {
+      closePanels();
+    }
+  }
+});
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closePanels();
+  if (event.key !== "Escape") return;
+  const abierto = panelPairs.find(([, panel]) => !$(panel).hidden);
+  if (!abierto) return;
+  const [trigger, panel] = abierto;
+  const devolverFoco = $(panel).contains(document.activeElement);
+  closePanels();
+  if (devolverFoco) $(trigger).focus({ preventScroll: true });
 });
 document.addEventListener("pointerdown", (event) => {
   if (!event.target.closest(".detail-panel, #rank-trigger, #mastery-trigger"))
