@@ -120,11 +120,10 @@ assets.eternalGoal = `${game}assets/loadouts/statstones/categories/lcu/ss_icon_g
 await mkdir(path.join(root, "public/assets"), { recursive: true });
 await mkdir(path.join(root, "public/data"), { recursive: true });
 const variantesVerificadas = new Map([
-  ["92a9d18f27bac20e273b089eba14e5cc5e5e46d74a5b67afc6926426eb9b3783", "/assets/honor.webp"],
-  ["e95f9d5983cbc2160c27cd68b3ff0c6981e83908da02086d3452a2a2f5c656eb", "/assets/frames/master.webp"],
-  ["41895e7e9026521b1b51912c040910dacfd735802c3437aca258b3cd4ecd370d", "/assets/master.webp"],
-  ["edafbe38d40268e4facb5678e155e8ed7ce5d44fd8893cbdd50aaff7fc555eac", "/assets/mastery.webp"],
-  ["7b41eb0b40c4194329e3c02dacebe4e048d65edc9b8ef678ab84e8d47d0344c3", "/assets/voidBanner.webp"],
+  ["92a9d18f27bac20e273b089eba14e5cc5e5e46d74a5b67afc6926426eb9b3783", "/assets/honor-sin-perdida.webp"],
+  ["41895e7e9026521b1b51912c040910dacfd735802c3437aca258b3cd4ecd370d", "/assets/master-sin-perdida.webp"],
+  ["edafbe38d40268e4facb5678e155e8ed7ce5d44fd8893cbdd50aaff7fc555eac", "/assets/mastery-sin-perdida.webp"],
+  ["7b41eb0b40c4194329e3c02dacebe4e048d65edc9b8ef678ab84e8d47d0344c3", "/assets/voidBanner-sin-perdida.webp"],
 ]);
 
 function rutaOptimizada(bytes, original) {
