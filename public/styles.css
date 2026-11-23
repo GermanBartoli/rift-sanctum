@@ -1800,6 +1800,10 @@ html { scrollbar-gutter: stable; }
 #recientes summary { display: grid; place-items: center; height: 100%; width: 44px; cursor: pointer; color: var(--gold); border: 1px solid #786344; border-radius: 4px; background: #101a27; list-style: none; }
 #recientes summary::-webkit-details-marker { display: none; }
 .lista-recientes { position: absolute; z-index: 5; right: 0; top: calc(100% + 4px); width: min(260px, 58vw); padding: 14px; background: #101a27; border: 1px solid #786344; }
+.perfiles-destacados { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; margin: 18px 0 0; list-style: none; }
+.perfiles-destacados a { display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border: 1px solid #786344; border-radius: 28px; background: #101a27; color: #eee; font-size: 14px; text-decoration: none; }
+.perfiles-destacados a:hover, .perfiles-destacados a:focus-visible { border-color: var(--gold); color: var(--gold); }
+.perfiles-destacados img { border-radius: 50%; }
 .lista-recientes ul { margin: 0; padding: 0; max-height: 40vh; overflow-y: auto; list-style: none; }
 .lista-recientes a { display: block; padding: 8px 0; overflow-wrap: anywhere; }
 .lista-recientes a:hover, .lista-recientes a:focus-visible { color: var(--gold); }
