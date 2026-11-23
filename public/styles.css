@@ -1742,8 +1742,23 @@ select {
 .profile-frame[data-frame-type="ranked"] { inset:auto; left:50%; top:50%; width:180px; height:180px; object-fit:contain; transform:translate(-50%,-50%); }
 .catalog-item[data-frame-type="ranked"] img { object-fit:contain; object-position:center; }
 
-/* El centro del aro queda 12 px debajo del centro del marco de 180 px. */
-.portrait[data-frame-type="ranked"] .profile-icon { top:calc(50% + 12px); width:90px; height:90px; }
+/* Cada marco tiene su propio centro y diámetro de abertura. */
+.portrait:has(.profile-frame[src$="/bronze.png"]) { --centro-icono: -2.4px; --diametro-icono: 98.4px; }
+.portrait:has(.profile-frame[src$="/challenger.png"]) { --centro-icono: 34.4px; --diametro-icono: 72.2px; }
+.portrait:has(.profile-frame[src$="/diamond.png"]) { --centro-icono: 10.2px; --diametro-icono: 77.1px; }
+.portrait:has(.profile-frame[src$="/emerald.png"]) { --centro-icono: 8.8px; --diametro-icono: 80.2px; }
+.portrait:has(.profile-frame[src$="/gold.png"]) { --centro-icono: -0.3px; --diametro-icono: 91.1px; }
+.portrait:has(.profile-frame[src$="/grandmaster.png"]) { --centro-icono: 23.6px; --diametro-icono: 75.6px; }
+.portrait:has(.profile-frame[src$="/iron.png"]) { --centro-icono: 0.0px; --diametro-icono: 113.0px; }
+.portrait:has(.profile-frame[src$="/master-sin-perdida.png"]) { --centro-icono: 13.1px; --diametro-icono: 83.2px; }
+.portrait:has(.profile-frame[src$="/platinum.png"]) { --centro-icono: -0.5px; --diametro-icono: 89.9px; }
+.portrait:has(.profile-frame[src$="/silver.png"]) { --centro-icono: -4.5px; --diametro-icono: 94.3px; }
+.portrait[data-frame-type="ranked"] .profile-icon {
+  top: calc(50% + var(--centro-icono, 0px));
+  width: var(--diametro-icono, 90px);
+  height: var(--diametro-icono, 90px);
+  border: 0;
+}
 
 .identity { background-size: 100% 100%; background-repeat: no-repeat; }
 .achievement.interactive { cursor: pointer; }
