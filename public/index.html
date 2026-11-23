@@ -202,7 +202,10 @@
         <div class="guide-intro"><span class="eyebrow">TU IDENTIDAD. TU LEGADO.</span>
         <h1 id="guide-title">Tu propio santuario</h1>
         <p>Buscá tu perfil de League of Legends o explorá el de otro invocador de LAS.</p>
-        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" list="recent-players" required maxlength="50"><datalist id="recent-players"></datalist><button class="button small">Buscar</button></form>
+        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" autocomplete="off" required maxlength="50"><details id="recientes">
+          <summary title="Jugadores recientes" aria-label="Jugadores recientes"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h3v3H3zm5 0h13v3H8zM3 11h3v3H3zm5 0h13v3H8zM3 17h3v3H3zm5 0h13v3H8z"/></svg></summary>
+          <div class="lista-recientes"><strong>Jugadores recientes</strong><ul id="recent-players"></ul><p id="sin-recientes">Todavía no buscaste jugadores.</p></div>
+        </details><button class="button small">Buscar</button></form>
         <p class="guide-hint">Ingresá el Riot ID completo: nombre#tag · Región LAS</p></div>
         <div class="guide-steps">
           <article><span class="eyebrow">01 · ENCONTRÁ TU PERFIL</span><h2>Tu historia en la Grieta</h2><p>Consultá tu nivel, rangos, campeones con mayor maestría y últimas partidas.</p></article>

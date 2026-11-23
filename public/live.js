@@ -6,11 +6,31 @@ let catalog, current, consultaActual = 0, live = false, editPlayer;
 let recent = [];
 try { recent = JSON.parse(localStorage.getItem('rift:recent') || '[]'); if (!Array.isArray(recent)) recent = []; } catch {}
 function suggestions() {
-  $('#recent-players').replaceChildren(...recent.filter(n => typeof n === 'string').map(n => { const option = document.createElement('option'); option.value = n; return option; }));
+  recent = recent.filter(nombre => typeof nombre === 'string' && nombre.trim());
+  $('#sin-recientes').hidden = recent.length > 0;
+  $('#recent-players').replaceChildren(...recent.map(nombre => {
+    const fila = document.createElement('li');
+    const enlace = document.createElement('a');
+    enlace.href = '#jugador/' + encodeURIComponent(nombre);
+    enlace.textContent = nombre;
+    fila.append(enlace);
+    return fila;
+  }));
 }
 suggestions();
+document.addEventListener('pointerdown', evento => {
+  if (!$('#recientes').contains(evento.target)) $('#recientes').open = false;
+});
+$('#recientes').addEventListener('keydown', evento => {
+  if (evento.key === 'Escape') {
+    $('#recientes').open = false;
+    $('#recientes summary').focus();
+  }
+});
+$('#recent-players').addEventListener('click', () => { $('#recientes').open = false; });
 document.addEventListener('sanctum-ready', event => { catalog = event.detail; if (location.hash.startsWith("#jugador/")) mostrarSeccion(location.hash); });
 function selectLive(value) {
+  $('#recientes').open = false;
   live = value;
   $('#perfil').hidden = live;
   $('#live-profile').hidden = !live || !current;
@@ -39,7 +59,10 @@ function mostrarSeccion(hash) {
   if (hash.startsWith('#jugador/')) {
     try { jugador = decodeURIComponent(hash.slice(9)); } catch {}
   }
-  if (hash === '#search-guide' || hash === '#buscar') current = null;
+  if (hash === '#search-guide' || hash === '#buscar') {
+    current = null;
+    $('#riot-id').value = '';
+  }
   if (jugador && current?.name !== jugador) {
     current = null;
     $('#riot-id').value = jugador;
@@ -55,7 +78,7 @@ for (const enlace of document.querySelectorAll('a[href="#perfil"], #live-tab')) 
   enlace.addEventListener('click', evento => {
     if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
     evento.preventDefault();
-    const destino = enlace.id === 'live-tab' && current ? '#jugador/' + encodeURIComponent(current.name) : enlace.hash;
+    const destino = enlace.hash;
     if (location.hash !== destino) history.pushState(null, '', destino);
     mostrarSeccion(destino);
     if (enlace.closest('footer')) $('#my-tab').focus({ preventScroll: true });

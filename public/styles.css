@@ -1796,6 +1796,13 @@ html { scrollbar-gutter: stable; }
 .guide-intro { max-width: 800px; }
 .guide-intro h1 { font-size: clamp(36px, 5vw, 64px); margin: 20px 0; }
 .guide-intro > p { color: #a4b4c9; line-height: 1.8; }
+#recientes { position: relative; }
+#recientes summary { display: grid; place-items: center; height: 100%; width: 44px; cursor: pointer; color: var(--gold); border: 1px solid #786344; border-radius: 4px; background: #101a27; list-style: none; }
+#recientes summary::-webkit-details-marker { display: none; }
+.lista-recientes { position: absolute; z-index: 5; right: 0; top: calc(100% + 4px); width: min(260px, 58vw); padding: 14px; background: #101a27; border: 1px solid #786344; }
+.lista-recientes ul { margin: 0; padding: 0; max-height: 40vh; overflow-y: auto; list-style: none; }
+.lista-recientes a { display: block; padding: 8px 0; overflow-wrap: anywhere; }
+.lista-recientes a:hover, .lista-recientes a:focus-visible { color: var(--gold); }
 #riot-search { margin-top: 28px; max-width: 720px; }
 #riot-id { flex: 1; min-width: 0; width: auto; font-size: 16px; padding: 18px; }
 .guide-hint { font-size: 12px; }
