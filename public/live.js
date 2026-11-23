@@ -2,14 +2,14 @@ import { openCustomizer, ajustarBanner } from './app.js';
 import { validateAppearance } from './profile.js';
 const $ = selector => document.querySelector(selector);
 const game = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/';
-let catalog, current, busy = false, live = false, editPlayer;
+let catalog, current, consultaActual = 0, live = false, editPlayer;
 let recent = [];
 try { recent = JSON.parse(localStorage.getItem('rift:recent') || '[]'); if (!Array.isArray(recent)) recent = []; } catch {}
 function suggestions() {
   $('#recent-players').replaceChildren(...recent.filter(n => typeof n === 'string').map(n => { const option = document.createElement('option'); option.value = n; return option; }));
 }
 suggestions();
-document.addEventListener('sanctum-ready', event => { catalog = event.detail; });
+document.addEventListener('sanctum-ready', event => { catalog = event.detail; if (location.hash.startsWith("#jugador/")) mostrarSeccion(location.hash); });
 function selectLive(value) {
   live = value;
   $('#perfil').hidden = live;
@@ -31,7 +31,21 @@ function selectLive(value) {
   renderMatches(live ? current?.matches : null, live ? current?.warnings : []);
 }
 function mostrarSeccion(hash) {
-  const consulta = hash === '#search-guide' || hash === '#buscar';
+  consultaActual++;
+  const boton = $('#riot-search button');
+  boton.disabled = false;
+  boton.textContent = 'Buscar';
+  let jugador = '';
+  if (hash.startsWith('#jugador/')) {
+    try { jugador = decodeURIComponent(hash.slice(9)); } catch {}
+  }
+  if (hash === '#search-guide' || hash === '#buscar') current = null;
+  if (jugador && current?.name !== jugador) {
+    current = null;
+    $('#riot-id').value = jugador;
+    if (catalog) buscarJugador(jugador, false);
+  }
+  const consulta = Boolean(jugador) || hash === '#search-guide' || hash === '#buscar';
   selectLive(consulta);
   window.scrollTo(0, 0);
   if (consulta && !current) $('#riot-id').focus({ preventScroll: true });
@@ -41,13 +55,14 @@ for (const enlace of document.querySelectorAll('a[href="#perfil"], #live-tab')) 
   enlace.addEventListener('click', evento => {
     if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
     evento.preventDefault();
-    if (location.hash !== enlace.hash) history.pushState(null, '', enlace.hash);
-    mostrarSeccion(enlace.hash);
+    const destino = enlace.id === 'live-tab' && current ? '#jugador/' + encodeURIComponent(current.name) : enlace.hash;
+    if (location.hash !== destino) history.pushState(null, '', destino);
+    mostrarSeccion(destino);
     if (enlace.closest('footer')) $('#my-tab').focus({ preventScroll: true });
   });
 }
 window.addEventListener('hashchange', () => {
-  if (['', '#perfil', '#search-guide', '#buscar'].includes(location.hash)) mostrarSeccion(location.hash);
+  if (location.hash.startsWith('#jugador/') || ['', '#perfil', '#search-guide', '#buscar'].includes(location.hash)) mostrarSeccion(location.hash);
 });
 if (location.hash === '#search-guide' || location.hash === '#buscar') mostrarSeccion(location.hash);
 
@@ -85,15 +100,21 @@ function renderPlayer(data) {
   clone.setAttribute('aria-label', `Santuario de ${data.name}`);
   const [name, tag] = data.name.split('#');
   q('h1').textContent = name; q('h1').after(text('p', `#${tag}`, 'identity-tag')); q('.level').textContent = data.level;
-  by('profile-icon').src = game + `v1/profile-icons/${data.icon}.jpg`; by('profile-icon').alt = data.name;
-  const rank = data.ranks.find(item => item.queueType === 'RANKED_SOLO_5x5');
+  by('profile-icon').src = game + `v1/profile-icons/${data.icon}.jpg`; by('profile-icon').alt = catalog.icons.find(icono => String(icono.id) === String(data.icon))?.name || 'Ícono de ' + data.name;
+  const niveles = ['IRON','BRONZE','SILVER','GOLD','PLATINUM','EMERALD','DIAMOND','MASTER','GRANDMASTER','CHALLENGER'];
+  const divisiones = ['IV','III','II','I'];
+  const puntaje = entrada => niveles.indexOf(entrada.tier) * 4 + divisiones.indexOf(entrada.rank);
+  const rank = data.ranks.filter(entrada => ['RANKED_SOLO_5x5','RANKED_FLEX_SR'].includes(entrada.queueType))
+    .sort((a,b) => puntaje(b) - puntaje(a) || b.leaguePoints - a.leaguePoints)[0];
+  const cola = rank?.queueType === 'RANKED_FLEX_SR' ? 'Flexible · 5v5' : 'Solo/Dúo';
   const frame = catalog.frames.find(item => item.id === rank?.tier.toLowerCase());
   if (frame) {
     by('profile-frame').src = frame.image; by('profile-frame').alt = frame.name; by('profile-frame').dataset.frameType = frame.type; q('.portrait').dataset.frameType = frame.type;
   } else by('profile-frame').hidden = true;
-  const tierLabel = frame?.name || 'Sin clasificar';
+  const tierLabel = frame ? [frame.name, rank.rank].join(' ') : 'Sin clasificar';
   q('.identity-rank strong').textContent = tierLabel;
-  q('.identity-rank > span:last-child').textContent = 'Solo/Dúo';
+  q('.identity-rank > span:last-child').textContent = rank ? cola : '';
+  by('rank-trigger').querySelector('.achievement-note').textContent = rank ? cola : '';
   by('rank-trigger').querySelector('strong').textContent = tierLabel;
   const emblem = tier => `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-${tier.toLowerCase()}.png`;
   by('rank-emblem').src = rank ? emblem(rank.tier) : catalog.assets.unranked; by('rank-emblem').alt = tierLabel;
@@ -160,13 +181,18 @@ function renderPlayer(data) {
   const key = `rift:appearance:${data.name.toLowerCase()}`;
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch {}
-  const defaults = validateAppearance({ icon: String(data.icon), frame: frame?.id }, catalog);
+  const campeon = data.masteries[0];
+  const fondo = catalog.backgrounds.find(item => Number(item.id) === campeon?.championId * 1000);
+  const estandarte = catalog.profileBanners.find(item => item.id === 'regalia-bannerskins-pastrank-' + frame?.id) || catalog.profileBanners[0];
+  by('backdrop').hidden = !fondo;
+  const automatico = { background: fondo?.id, icon: String(data.icon), frame: frame?.id, profileBanner: estandarte.id };
+  const defaults = validateAppearance(automatico, catalog);
   const collections = { background: 'backgrounds', icon: 'icons', frame: 'frames', profileBanner: 'profileBanners', honor: 'honors', trophy: 'trophies', banner: 'banners' };
   const apply = values => {
     for (const [field, collection] of Object.entries(collections)) {
       const item = catalog[collection].find(entry => String(entry.id) === String(values[field]));
       if (!item) continue;
-      if (field === 'background') { by('backdrop').src = item.image; by('backdrop').alt = item.name; }
+      if (field === 'background') { by('backdrop').hidden = false; by('backdrop').src = item.image; by('backdrop').alt = item.name; }
       else if (field === 'icon') by('profile-icon').src = item.image;
       else if (field === 'frame') { by('profile-frame').hidden = false; by('profile-frame').src = item.image; by('profile-frame').alt = item.name; by('profile-frame').dataset.frameType = item.type; q('.portrait').dataset.frameType = item.type; }
       else if (field === 'profileBanner') { ajustarBanner(item.image, q('.identity')); }
@@ -184,7 +210,7 @@ function renderPlayer(data) {
     art.parentElement.querySelector('.achievement-note').textContent = 'Dato no publicado · Personalizar';
     art.parentElement.onclick = event => editPlayer(tab, event.currentTarget);
   }
-  apply(saved);
+  apply({ ...automatico, ...saved });
   editPlayer = (tab, trigger) => {
     closePanels();
     const initial = validateAppearance({ ...defaults, ...saved }, catalog);
@@ -200,15 +226,21 @@ function renderPlayer(data) {
   q('.showcase-foot').replaceChildren(text('span', `Actualizado: ${new Date(data.updatedAt).toLocaleString('es-AR')}`));
   $('#live-profile').replaceChildren(clone); selectLive(true);
 }
-$('#riot-search').onsubmit = async event => {
-  event.preventDefault(); if (busy || !catalog) return;
-  busy = true; const button = event.currentTarget.querySelector('button'); button.disabled = true;
+$('#riot-search').onsubmit = event => {
+  event.preventDefault();
+  if (catalog) buscarJugador($('#riot-id').value.trim(), true);
+};
+async function buscarJugador(jugador, actualizarRuta) {
+  const consulta = ++consultaActual;
+  const button = $('#riot-search button'); button.disabled = true;
   selectLive(true); $('#history-status').textContent = 'Consultando Riot…'; button.textContent = 'Buscando…';
   try {
-    const response = await fetch('/api/player?id=' + encodeURIComponent($('#riot-id').value.trim()));
+    const response = await fetch('/api/player?id=' + encodeURIComponent(jugador));
     if (!(response.headers.get('content-type') || '').includes('json')) throw Error('La consulta requiere el servidor de Cloudflare Pages.');
-    const data = await response.json(); if (!response.ok) throw Error(data.error);
+    const data = await response.json(); if (consulta !== consultaActual) return; if (!response.ok) throw Error(data.error);
     const focoEnBusqueda = $('#riot-search').contains(document.activeElement) || document.activeElement === document.body;
+    const destino = '#jugador/' + encodeURIComponent(data.name);
+    if (actualizarRuta && location.hash !== destino) history.pushState(null, '', destino);
     current = data; renderPlayer(data); window.scrollTo(0, 0);
     if (focoEnBusqueda) {
       const titulo = $('#remote-sanctum h1');
@@ -217,6 +249,6 @@ $('#riot-search').onsubmit = async event => {
     }
     recent = [data.name, ...recent.filter(name => name !== data.name)].slice(0, 15); suggestions();
     try { localStorage.setItem('rift:recent', JSON.stringify(recent)); } catch {}
-  } catch (error) { $('#history-status').textContent = error.message; $('#history').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-  finally { busy = false; button.disabled = false; button.textContent = 'Buscar'; }
+  } catch (error) { if (consulta !== consultaActual) return; $('#history-status').textContent = error.message; $('#history').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  finally { if (consulta === consultaActual) { button.disabled = false; button.textContent = 'Buscar'; } }
 };
