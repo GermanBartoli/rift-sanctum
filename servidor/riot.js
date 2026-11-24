@@ -329,6 +329,14 @@ export async function perfil(ctx) {
   };
 }
 export async function privadaJugador(ctx, accion) {
+  if (accion === "clasico") {
+    const { name, level, icon, ranks, masteries, masteryScore, matches, warnings, updatedAt } = await perfil(ctx);
+    return {
+      name, level, icon, ranks, masteries, masteryScore, warnings, updatedAt,
+      matches: matches.map(({ id, date, duration, mode, champion, win, kills, deaths, assists }) =>
+        ({ id, date, duration, mode, champion, win, kills, deaths, assists })),
+    };
+  }
   if (accion === "perfil") return perfil(ctx);
   if (accion === "cronologia") {
     const id = ctx.parametros.get("partida") || "";

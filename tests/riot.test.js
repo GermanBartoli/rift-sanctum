@@ -44,3 +44,18 @@ test('Consulta y transforma partidas, rango y maestría',async()=>{
  globalThis.fetch=async url=>{let value;if(url.includes('by-riot-id'))value={puuid:'p',gameName:'Nombre',tagLine:'LAS'};else if(url.includes('/summoner/'))value={summonerLevel:30,profileIconId:1};else if(url.includes('/league/'))value=[];else if(url.includes('champion-masteries'))value=[{championId:21,championLevel:5}];else if(url.includes('/ids?'))value=['LA2_1'];else value={info:{queueId:420,gameType:'MATCHED_GAME',gameCreation:1,gameDuration:1200,gameMode:'CLASSIC',participants:[{puuid:'p',championName:'Ahri',win:true,kills:3,deaths:1,assists:4}]}};return Response.json(value);};
  try {const r=await onRequestGet({request:request('Nombre#LAS'),env:{RIOT_PRODUCTION_API_KEY:'prueba'}});const data=await r.json();assert.equal(r.status,200);assert.equal(data.name,'Nombre#LAS');assert.equal(data.masteryScore,5);assert.equal(data.matches[0].kills,3);assert.equal(data.puuid,undefined);}finally{globalThis.fetch=original;}
 });
+
+test('La búsqueda clásica en pruebas locales devuelve el historial resumido de LAS', async t => {
+  t.mock.method(globalThis, 'fetch', mockRiot(() => 0));
+  const consulta = new Request('http://localhost/api/player?accion=clasico&id=Nombre%23LAS');
+  const respuesta = await onRequestGet({
+    request: consulta, desarrolloLocal: true, env: { RIOT_API_KEY: 'prueba' },
+  });
+  assert.equal(respuesta.status, 200);
+  const perfil = await respuesta.json();
+  assert.equal(perfil.name, 'Nombre#LAS');
+  assert.deepEqual(perfil.matches.map(partida => partida.id), ['LA2_1', 'LA2_2']);
+  assert.equal(perfil.matches[0].champion, 'Ahri');
+  assert.equal(perfil.matches[0].participantes, undefined);
+  assert.equal(perfil.coleccion, undefined);
+});

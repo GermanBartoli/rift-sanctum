@@ -202,14 +202,13 @@
       <section id="search-guide" class="search-guide" hidden aria-labelledby="guide-title">
         <div class="guide-intro"><span class="eyebrow">TU IDENTIDAD. TU LEGADO.</span>
         <h1 id="guide-title">Tu propio santuario</h1>
-        <p>Buscá tu perfil de League of Legends o explorá el de otro invocador por región.</p>
-        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" autocomplete="off" required maxlength="50"><select id="riot-region" aria-label="Región de juego"></select><details id="recientes">
+        <p>Buscá tu perfil de League of Legends o explorá el de otro invocador de LAS.</p>
+        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" autocomplete="off" required maxlength="50"><details id="recientes">
           <summary title="Jugadores recientes" aria-label="Jugadores recientes"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h3v3H3zm5 0h13v3H8zM3 11h3v3H3zm5 0h13v3H8zM3 17h3v3H3zm5 0h13v3H8z"/></svg></summary>
           <div class="lista-recientes"><strong>Jugadores recientes</strong><ul id="recent-players"></ul><p id="sin-recientes">Todavía no buscaste jugadores.</p></div>
         </details><button class="button small">Buscar</button></form>
-        <p class="guide-hint">Ingresá el Riot ID completo: nombre#tag y elegí su región</p>
+        <p class="guide-hint">Ingresá el Riot ID completo: nombre#tag · Región LAS</p>
         <p id="acceso-riot" role="status" hidden></p>
-        <button type="button" class="button small" id="ver-ejemplo">Explorar un perfil de ejemplo</button>
         <nav aria-label="Perfiles destacados">
           <ul class="perfiles-destacados">
             <li><a href="#jugador/KillerBiss%232013"><img src="/assets/icon.jpg" width="42" height="42" alt=""><span>KillerBiss#2013</span></a></li>
@@ -223,7 +222,8 @@
           <article><span class="eyebrow">02 · EXPLORÁ TUS LOGROS</span><h2>Un santuario interactivo</h2><p>Pasá el cursor o tocá los emblemas de clasificatoria y maestría para ver sus detalles.</p></article>
           <article><span class="eyebrow">03 · HACÉLO TUYO</span><h2>Dale tu estilo</h2><p>Elegí fondos, íconos y marcos. Completá honor, trofeo y estandarte manualmente: Riot no publica esos datos. Los cambios se guardan en este navegador.</p></article>
         </div>
-      </section><section id="live-profile" hidden></section><section class="below-profile" id="history" hidden><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Partidas y progreso</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section></main>
+      </section><section id="live-profile" hidden></section><section class="below-profile" id="history" hidden><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Historial de partidas</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section>
+      <section class="below-profile" id="ejemplo-ampliado" aria-label="Ejemplo del perfil ampliado" hidden><div id="panel-ejemplo"></div></section></main>
     <footer hidden>
       <a class="footer-brand" href="#perfil">◈ RIFT SANCTUM</a>
       <p>Creado por German Bartoli · Con la colaboración de Codex</p>

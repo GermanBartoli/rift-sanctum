@@ -2,16 +2,10 @@ import { openCustomizer, ajustarBanner } from './app.js';
 import { validateAppearance } from './profile.js';
 const $ = selector => document.querySelector(selector);
 import {mostrarEjemplo} from './perfil-ejemplo.js';
-import { regiones, verPerfil, pedir, cargar } from './riot-perfil.js';
+import { cargar } from './riot-perfil.js';
 let referencias;
-const selectorRegion = $('#riot-region');
-for (const [id,nombre] of Object.entries(regiones)) selectorRegion.add(new Option(nombre,id));
-selectorRegion.addEventListener('change',()=>{
-  consultaActual++;
-  const boton=$('#riot-search button');boton.disabled=false;boton.textContent='Buscar';
-});
-function rutaJugador(nombre,region) {
-  return '#jugador/' + encodeURIComponent(nombre) + (region === 'la2' ? '' : '/' + region);
+function rutaJugador(nombre) {
+  return '#jugador/' + encodeURIComponent(nombre);
 }
 const dragon = 'https://ddragon.leagueoflegends.com/cdn/';
 let fuentes, original;
@@ -34,13 +28,13 @@ let recent = [];
 try { recent = JSON.parse(localStorage.getItem('rift:recent') || '[]'); if (!Array.isArray(recent)) recent = []; } catch {}
 function suggestions() {
   recent = recent.map(item => typeof item === 'string' ? {nombre:item,region:'la2'} : item)
-    .filter(item => item?.nombre && Object.hasOwn(regiones,item.region));
+    .filter(item => typeof item?.nombre === 'string' && item.nombre.trim() && item.region === 'la2');
   $('#sin-recientes').hidden = recent.length > 0;
-  $('#recent-players').replaceChildren(...recent.map(({nombre,region}) => {
+  $('#recent-players').replaceChildren(...recent.map(({nombre}) => {
     const fila = document.createElement('li');
     const enlace = document.createElement('a');
-    enlace.href = rutaJugador(nombre,region);
-    enlace.textContent = nombre + ' · ' + regiones[region];
+    enlace.href = rutaJugador(nombre);
+    enlace.textContent = nombre;
     fila.append(enlace);
     return fila;
   }));
@@ -57,31 +51,19 @@ $('#recientes').addEventListener('keydown', evento => {
 });
 $('#recent-players').addEventListener('click', () => { $('#recientes').open = false; });
 document.addEventListener('sanctum-ready', event => { original = event.detail; if (location.hash.startsWith("#jugador/")) mostrarSeccion(location.hash); });
-let estadoAcceso;
-function consultarAcceso() {
-  estadoAcceso ||= pedir('/api/player',{accion:'disponibilidad'}).then(d=>{
-    const aviso=$('#acceso-riot');
-    $('#riot-search').hidden = !d.disponible;
-    $('.guide-hint').hidden = !d.disponible;
-    $('.perfiles-destacados').closest('nav').hidden = !d.disponible;
-    aviso.hidden=d.disponible;
-    aviso.textContent=d.disponible?'':'Las consultas públicas esperan la aprobación de Riot. Podés explorar el perfil de ejemplo.';
-    return d.disponible;
-  }).catch(()=>{estadoAcceso=null;});
-  return estadoAcceso;
-}
-$('#ver-ejemplo').onclick=()=>{
-  const destino=$('#matches');
-  $('#history-status').textContent='';
-  cargar(destino,async()=>{
-    const r=await fetch('/data/referencias-riot.json');
-    if(!r.ok)throw Error('No se pudo abrir el ejemplo.');
-    return mostrarEjemplo(await r.json());
+let ejemploIniciado = false;
+function abrirEjemplo() {
+  if (ejemploIniciado) return;
+  ejemploIniciado = true;
+  cargar($('#panel-ejemplo'), async () => {
+    const respuesta = await fetch('/data/referencias-riot.json');
+    if (!respuesta.ok) throw Error('No se pudo abrir el ejemplo.');
+    return mostrarEjemplo(await respuesta.json());
   });
-  $('#history').scrollIntoView({block:'start'});
-};
+}
 function selectLive(value) {
-  if(value)consultarAcceso();
+  $('#ejemplo-ampliado').hidden = !value;
+  if (value) abrirEjemplo();
   $('#recientes').open = false;
   live = value;
   $('#perfil').hidden = live;
@@ -104,22 +86,21 @@ function selectLive(value) {
 }
 function mostrarSeccion(hash) {
   consultaActual++;
+  $('#acceso-riot').hidden = true;
   const boton = $('#riot-search button');
   boton.disabled = false;
   boton.textContent = 'Buscar';
   let jugador = '';
   if (hash.startsWith('#jugador/')) {
     try {
-      const [id, region='la2'] = hash.slice(9).split('/');
-      selectorRegion.value = Object.hasOwn(regiones,region) ? region : 'la2';
-      jugador = decodeURIComponent(id);
+      jugador = decodeURIComponent(hash.slice(9).split('/')[0]);
     } catch {}
   }
   if (hash === '#search-guide' || hash === '#buscar') {
     current = null;
     $('#riot-id').value = '';
   }
-  if (jugador && (current?.name !== jugador || current?.region !== selectorRegion.value)) {
+  if (jugador && current?.name !== jugador) {
     current = null;
     $('#riot-id').value = jugador;
     if (original) buscarJugador(jugador, false);
@@ -158,12 +139,15 @@ $('#customize').addEventListener('click', event => {
   editPlayer?.('backgrounds', event.currentTarget);
 }, true);
 function renderMatches(matches, warnings = []) {
-  const contenedor = $('#matches');
-  const perfil = current;
-  contenedor.replaceChildren();
-  $('#history-status').textContent = warnings.join(' ') || (matches ? '' : 'Buscá tu perfil para consultar tus partidas y tu progreso.');
-  if (!matches || !perfil) return;
-  if (live && referencias) verPerfil(contenedor,perfil,perfil.region,referencias);
+  $('#matches').replaceChildren();
+  $('#history-status').textContent = warnings.length ? warnings.join(' ') : matches ? (matches.length ? 'Últimas partidas · LAS · Actualizadas al consultar' : 'No hay partidas recientes.') : 'Buscá tu perfil para consultar también tus últimas partidas.';
+  for (const match of matches || []) {
+    const row = document.createElement('article'); row.className = 'match-row';
+    for (const text of [match.win ? 'Victoria' : 'Derrota', match.champion, `${match.kills} / ${match.deaths} / ${match.assists}`, match.mode, `${Math.floor(match.duration / 60)} min`, new Date(match.date).toLocaleDateString('es-AR')]) {
+      const span = document.createElement('span'); span.textContent = text; row.append(span);
+    }
+    $('#matches').append(row);
+  }
 }
 function renderPlayer(data) {
   const clone = $('#perfil').cloneNode(true); clone.hidden = false; clone.id = 'remote-sanctum';
@@ -311,14 +295,8 @@ async function buscarJugador(jugador, actualizarRuta) {
   const button = $('#riot-search button'); button.disabled = true;
   selectLive(true); $('#history-status').textContent = 'Consultando Riot…'; button.textContent = 'Buscando…';
   try {
-    const region = selectorRegion.value;
-    const disponible = await consultarAcceso();
-    if (consulta !== consultaActual) return;
-    if (disponible === false) {
-      $('#history-status').textContent = 'Podés consultar las partidas del perfil de ejemplo.';
-      return;
-    }
-    const response = await fetch('/api/player?id=' + encodeURIComponent(jugador) + '&region=' + region);
+    const region = 'la2';
+    const response = await fetch('/api/player?accion=clasico&id=' + encodeURIComponent(jugador));
     if (!(response.headers.get('content-type') || '').includes('json')) throw Error('La consulta requiere el servidor de Cloudflare Pages.');
     const data = await response.json(); if (consulta !== consultaActual) return; if (!response.ok) throw Error(data.error);
     $('#acceso-riot').hidden = true;
@@ -327,7 +305,7 @@ async function buscarJugador(jugador, actualizarRuta) {
     catalog = coleccion;
     const focoEnBusqueda = $('#riot-search').contains(document.activeElement) || document.activeElement === document.body;
     data.region = region;
-    const destino = rutaJugador(data.name,region);
+    const destino = rutaJugador(data.name);
     if (actualizarRuta && location.hash !== destino) history.pushState(null, '', destino);
     current = data; renderPlayer(data); window.scrollTo(0, 0);
     if (focoEnBusqueda) {
@@ -337,6 +315,6 @@ async function buscarJugador(jugador, actualizarRuta) {
     }
     recent = [{nombre:data.name,region}, ...recent.filter(x => x.nombre !== data.name || x.region !== region)].slice(0, 15); suggestions();
     try { localStorage.setItem('rift:recent', JSON.stringify(recent)); } catch {}
-  } catch (error) { if (consulta !== consultaActual) return; const aviso = $('#acceso-riot'); aviso.hidden = false; aviso.textContent = jugador + ' · ' + error.message; aviso.scrollIntoView({block:'center'}); }
+  } catch (error) { if (consulta !== consultaActual) return; const aviso = $('#acceso-riot'); $('#history-status').textContent = ''; aviso.hidden = false; aviso.textContent = jugador + ' · ' + error.message; aviso.scrollIntoView({block:'center'}); }
   finally { if (consulta === consultaActual) { button.disabled = false; button.textContent = 'Buscar'; } }
 };

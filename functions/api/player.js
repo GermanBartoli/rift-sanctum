@@ -21,6 +21,7 @@ export async function onRequestGet(evento) {
     const accion = ctx.parametros.get("accion") || "perfil";
     if (
       ![
+        "clasico",
         "perfil",
         "region",
         "historial",
