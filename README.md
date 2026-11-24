@@ -1,6 +1,6 @@
 # Rift Sanctum
 
-**Un santuario de League of Legends para explorar perfiles de LAS y personalizar su presentación.**
+**Un santuario de League of Legends para explorar perfiles por región y personalizar su presentación.**
 
 [![Repositorio](https://img.shields.io/badge/GitHub-GermanBartoli-181717?logo=github)](https://github.com/GermanBartoli/rift-sanctum)
 [![Verificaciones](https://github.com/GermanBartoli/rift-sanctum/actions/workflows/cloudflare.yml/badge.svg)](https://github.com/GermanBartoli/rift-sanctum/actions/workflows/cloudflare.yml)
@@ -10,6 +10,8 @@
 ![Vista del proyecto: Rift Sanctum](docs/images/vista-actual.jpg)
 
 *Captura de la página publicada, tomada el 9 de noviembre de 2026. Conservada sin redimensionar ni recomprimir.*
+
+[Políticas de Riot aplicadas al proyecto](docs/POLITICAS_RIOT.md)
 
 ## Primeros pasos
 
@@ -33,6 +35,8 @@ Un santuario personal de League of Legends: el perfil de **KillerBiss**, sus log
 - Cambiar el fondo, el ícono y el marco con búsqueda, filtros por campeón, paginación y vista previa.
 - Guardar la apariencia en el navegador, cancelar una selección o restaurar el perfil original.
 
+**Tu santuario** utiliza el catálogo oficial de Data Dragon para fondos, íconos, campeones, runas y objetos, más las ilustraciones locales disponibles. El catálogo histórico de la vista original se conserva por separado.
+
 ## Colección disponible
 
 | Recursos                        | Cantidad en el catálogo inicial |
@@ -41,7 +45,7 @@ Un santuario personal de League of Legends: el perfil de **KillerBiss**, sus log
 | Íconos con imagen disponible    |                           5.116 |
 | Marcos de clasificación y nivel |                              31 |
 
-El catálogo utiliza los recursos públicos de [CommunityDragon](https://communitydragon.org/documentation/assets), con nombres en español cuando están disponibles. Incluye los fondos con `splashPath`, las variantes publicadas en `questSkinInfo`, los íconos con imagen y los marcos de rango/nivel disponibles en las rutas utilizadas. No es una garantía de cobertura de recursos inéditos o exclusivos que la fuente no publique. Hay 86 entradas de íconos sin imagen en la fuente que no se ofrecen en el selector. Los chromas que no tienen ilustración propia no generan un fondo distinto.
+La colección histórica de **Mi santuario** utiliza los recursos públicos de [CommunityDragon](https://communitydragon.org/documentation/assets), con nombres en español cuando están disponibles. Incluye los fondos con `splashPath`, las variantes publicadas en `questSkinInfo`, los íconos con imagen y los marcos de rango/nivel disponibles en las rutas utilizadas. No es una garantía de cobertura de recursos inéditos o exclusivos que la fuente no publique. Hay 86 entradas de íconos sin imagen en la fuente que no se ofrecen en el selector. Los chromas que no tienen ilustración propia no generan un fondo distinto.
 
 Los recursos del perfil original se incluyen localmente. El resto de la colección se carga bajo demanda desde CommunityDragon. Si una miniatura falla, se muestra un marcador alternativo. Las fuentes tipográficas usan Google Fonts con alternativas locales.
 
@@ -99,7 +103,7 @@ El proceso necesita Internet y descarga recursos públicos, sin claves de Riot. 
 
 Los rangos, maestrías, honor y nivel de **Mi santuario** son una transcripción de las capturas del 29 de octubre de 2026; **no se sincronizan en tiempo real**. La personalización afecta la apariencia de este sitio y se guarda por navegador: no modifica el cliente de League of Legends ni la cuenta de Riot, y no se comparte todavía con otros visitantes.
 
-La solapa **Tu Santuario** consulta Riot ID completos en LAS mediante `functions/api/player.js`. Requiere configurar `RIOT_API_KEY` como secreto de Cloudflare Pages. Sin esa clave, muestra conexión pendiente. Las sugerencias corresponden a las últimas cuentas consultadas en este navegador: Riot no ofrece búsqueda global por coincidencias parciales. El historial muestra las últimas cinco partidas al consultar; no se actualiza automáticamente. Honor, trofeos y estandartes no están disponibles en la API: se pueden completar manualmente desde el personalizador, sin presentarlos como datos verificados por Riot. Mi Santuario conserva sus datos de referencia y su personalización local.
+La solapa **Tu santuario** busca un Riot ID y su plataforma mediante `functions/api/player.js`. En producción utiliza `RIOT_PRODUCTION_API_KEY`, exclusiva de Rift. Mientras la solicitud esté en revisión se puede recorrer el perfil de ejemplo. Las sugerencias corresponden a las últimas cuentas consultadas en este navegador: Riot no ofrece búsqueda global por coincidencias parciales. El historial carga cinco partidas públicas por página, con filtros de cola y período, detalle por equipo, compras, cronología y rendimiento. El perfil incluye todas las maestrías, desafíos y observaciones de progreso guardadas en este navegador. Honor, trofeos y estandartes no están disponibles en la API: se pueden completar manualmente desde el personalizador, sin presentarlos como datos verificados por Riot. Mi Santuario conserva sus datos de referencia y su personalización local.
 
 ## Publicación
 

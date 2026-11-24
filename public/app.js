@@ -27,9 +27,10 @@ function toast(message) {
 }
 
 function getItem(collection, id) {
+  const coleccion = externalEditor?.catalogo || catalog;
   return (
-    catalog[collection].find((item) => String(item.id) === String(id)) ||
-    catalog[collection][0]
+    coleccion[collection].find((item) => String(item.id) === String(id)) ||
+    coleccion[collection][0]
   );
 }
 
@@ -185,7 +186,7 @@ function renderDetails() {
 
 function renderCollection() {
   const items = filterCatalog(
-    catalog[activeTab],
+    (externalEditor?.catalogo || catalog)[activeTab],
     $("#catalog-search").value,
     activeTab === "backgrounds" ? $("#champion-filter").value : "",
   );
@@ -421,7 +422,7 @@ $("#next-page").addEventListener("click", () => {
   renderCollection();
 });
 $("#reset-profile").addEventListener("click", () => {
-  draft = validateAppearance(externalEditor?.defaults || {}, catalog);
+  draft = validateAppearance(externalEditor?.defaults || {}, externalEditor?.catalogo || catalog);
   externalReset = Boolean(externalEditor);
   editedFields.clear();
   applyAppearance(draft, true);
@@ -430,7 +431,7 @@ $("#reset-profile").addEventListener("click", () => {
 });
 $("#save-profile").addEventListener("click", () => {
   if (externalEditor) {
-    const saved = externalEditor.save(validateAppearance(draft, catalog), editedFields, externalReset);
+    const saved = externalEditor.save(validateAppearance(draft, externalEditor.catalogo || catalog), editedFields, externalReset);
     toast(saved ? "Personalización guardada para este perfil en este navegador." : "Cambios aplicados. El navegador no permitió guardarlos para la próxima visita.");
     dialog.close();
     return;

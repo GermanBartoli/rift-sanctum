@@ -13,6 +13,7 @@
     <link rel="preload" as="image" href="/assets/background.jpg" fetchpriority="high" />
     <link rel="stylesheet" href="assets/fuentes/fuentes.css">
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/riot-panel.css" />
     <script type="module" src="/live.js"></script><script type="module" src="/app.js"></script>
     <meta property="og:type" content="website" />
     <meta property="og:title" content="KillerBiss · Rift Sanctum" />
@@ -201,18 +202,20 @@
       <section id="search-guide" class="search-guide" hidden aria-labelledby="guide-title">
         <div class="guide-intro"><span class="eyebrow">TU IDENTIDAD. TU LEGADO.</span>
         <h1 id="guide-title">Tu propio santuario</h1>
-        <p>Buscá tu perfil de League of Legends o explorá el de otro invocador de LAS.</p>
-        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" autocomplete="off" required maxlength="50"><details id="recientes">
+        <p>Buscá tu perfil de League of Legends o explorá el de otro invocador por región.</p>
+        <form id="riot-search"><input id="riot-id" aria-label="Riot ID" placeholder="KillerBiss#2013" autocomplete="off" required maxlength="50"><select id="riot-region" aria-label="Región de juego"></select><details id="recientes">
           <summary title="Jugadores recientes" aria-label="Jugadores recientes"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5h3v3H3zm5 0h13v3H8zM3 11h3v3H3zm5 0h13v3H8zM3 17h3v3H3zm5 0h13v3H8z"/></svg></summary>
           <div class="lista-recientes"><strong>Jugadores recientes</strong><ul id="recent-players"></ul><p id="sin-recientes">Todavía no buscaste jugadores.</p></div>
         </details><button class="button small">Buscar</button></form>
-        <p class="guide-hint">Ingresá el Riot ID completo: nombre#tag · Región LAS</p>
+        <p class="guide-hint">Ingresá el Riot ID completo: nombre#tag y elegí su región</p>
+        <p id="acceso-riot" role="status" hidden></p>
+        <button type="button" class="button small" id="ver-ejemplo">Explorar un perfil de ejemplo</button>
         <nav aria-label="Perfiles destacados">
           <ul class="perfiles-destacados">
             <li><a href="#jugador/KillerBiss%232013"><img src="/assets/icon.jpg" width="42" height="42" alt=""><span>KillerBiss#2013</span></a></li>
-            <li><a href="#jugador/%E6%A5%BC%E8%98%AD%E3%82%93%232107"><img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7056.jpg" width="42" height="42" alt=""><span>楼蘭ん#2107</span></a></li>
-            <li><a href="#jugador/Brunotto%230178"><img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/3790.jpg" width="42" height="42" alt=""><span>Brunotto#0178</span></a></li>
-            <li><a href="#jugador/%CB%86%20%CB%86%CB%87%23LAS"><img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/588.jpg" width="42" height="42" alt=""><span>ˆ ˆˇ#LAS</span></a></li>
+            <li><a href="#jugador/%E6%A5%BC%E8%98%AD%E3%82%93%232107"><img src="https://ddragon.leagueoflegends.com/cdn/16.23.1/img/profileicon/7056.png" width="42" height="42" alt=""><span>楼蘭ん#2107</span></a></li>
+            <li><a href="#jugador/Brunotto%230178"><img src="https://ddragon.leagueoflegends.com/cdn/16.23.1/img/profileicon/3790.png" width="42" height="42" alt=""><span>Brunotto#0178</span></a></li>
+            <li><a href="#jugador/%CB%86%20%CB%86%CB%87%23LAS"><img src="https://ddragon.leagueoflegends.com/cdn/16.23.1/img/profileicon/588.png" width="42" height="42" alt=""><span>ˆ ˆˇ#LAS</span></a></li>
           </ul>
         </nav></div>
         <div class="guide-steps">
@@ -220,10 +223,11 @@
           <article><span class="eyebrow">02 · EXPLORÁ TUS LOGROS</span><h2>Un santuario interactivo</h2><p>Pasá el cursor o tocá los emblemas de clasificatoria y maestría para ver sus detalles.</p></article>
           <article><span class="eyebrow">03 · HACÉLO TUYO</span><h2>Dale tu estilo</h2><p>Elegí fondos, íconos y marcos. Completá honor, trofeo y estandarte manualmente: Riot no publica esos datos. Los cambios se guardan en este navegador.</p></article>
         </div>
-      </section><section id="live-profile" hidden></section><section class="below-profile" id="history" hidden><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Historial de partidas</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section></main>
+      </section><section id="live-profile" hidden></section><section class="below-profile" id="history" hidden><div><span class="eyebrow">TU CAMINO EN LA GRIETA</span><h2>Partidas y progreso</h2><p id="history-status" role="status">Buscá un Riot ID para consultar sus últimas partidas.</p><div id="matches"></div></div></section></main>
     <footer hidden>
       <a class="footer-brand" href="#perfil">◈ RIFT SANCTUM</a>
       <p>Creado por German Bartoli · Con la colaboración de Codex</p>
+      <a href="https://github.com/GermanBartoli/rift-sanctum/blob/main/docs/POLITICAS_RIOT.md">Políticas de Riot del proyecto</a>
       <small
         >Proyecto de fans independiente. No afiliado ni respaldado por Riot
         Games.<br />League of Legends y sus recursos pertenecen a Riot

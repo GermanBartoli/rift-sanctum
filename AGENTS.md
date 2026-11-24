@@ -1,5 +1,7 @@
 # Rift Sanctum
 
+Antes de cambiar las integraciones de Riot, leer [las políticas del proyecto](docs/POLITICAS_RIOT.md).
+
 Proyecto personal. Antes de modificar el despliegue, leer [docs/despliegue.md](docs/despliegue.md).
 
 Los pushes a main ejecutan pruebas, build y publicación en Cloudflare Pages mediante GitHub Actions. Preservar CRLF.

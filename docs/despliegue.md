@@ -15,7 +15,7 @@ En los secretos de Actions del repositorio deben existir:
 - `CLOUDFLARE_API_TOKEN`: token vigente con permiso Account / Cloudflare Pages / Edit, limitado a la cuenta que contiene el proyecto.
 - `CLOUDFLARE_ACCOUNT_ID`: ID de esa misma cuenta (32 caracteres hexadecimales). No usar el ID de zona ni el nombre del proyecto.
 
-No guardar valores en archivos. La sesión local de Wrangler y la conexión de Cloudflare en Codex no autentican GitHub Actions. Conservar `RIOT_API_KEY` como secreto del proyecto Pages; no sustituye el token de publicación.
+No guardar valores en archivos. La sesión local de Wrangler y la conexión de Cloudflare en Codex no autentican GitHub Actions. La clave pública aprobada para Rift se configura en Pages como `RIOT_PRODUCTION_API_KEY`. El servidor local usa `RIOT_API_KEY` para el desarrollo privado.
 
 ## Error de autenticación 10000
 

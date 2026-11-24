@@ -1,3 +1,4 @@
+import {onRequestGet as jugador} from '../functions/api/player.js';
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
@@ -14,6 +15,15 @@ const types = {
 };
 createServer(async (req, res) => {
   try {
+    const url = new URL(req.url, 'http://localhost');
+    const rutas = {'/api/player':jugador};
+    if (Object.hasOwn(rutas,url.pathname)) {
+      if (req.method !== 'GET') { res.writeHead(405).end(); return; }
+      const resultado = await rutas[url.pathname]({desarrolloLocal:true,request:new Request(url),env:{RIOT_API_KEY:process.env.RIOT_API_KEY}});
+      res.writeHead(resultado.status,Object.fromEntries(resultado.headers));
+      res.end(await resultado.text());
+      return;
+    }
     const path = resolve(
       root,
       "." + decodeURIComponent(new URL(req.url, "http://localhost").pathname),
@@ -31,4 +41,4 @@ createServer(async (req, res) => {
   } catch {
     res.writeHead(404).end("No encontrado");
   }
-}).listen(4173, "127.0.0.1", () => console.log("http://127.0.0.1:4173"));
+}).listen(Number(process.env.PORT || 4173), '127.0.0.1', function () {console.log('http://127.0.0.1:'+this.address().port);});

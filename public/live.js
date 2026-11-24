@@ -1,18 +1,46 @@
 import { openCustomizer, ajustarBanner } from './app.js';
 import { validateAppearance } from './profile.js';
 const $ = selector => document.querySelector(selector);
-const game = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/';
+import {mostrarEjemplo} from './perfil-ejemplo.js';
+import { regiones, verPerfil, pedir, cargar } from './riot-perfil.js';
+let referencias;
+const selectorRegion = $('#riot-region');
+for (const [id,nombre] of Object.entries(regiones)) selectorRegion.add(new Option(nombre,id));
+selectorRegion.addEventListener('change',()=>{
+  consultaActual++;
+  const boton=$('#riot-search button');boton.disabled=false;boton.textContent='Buscar';
+});
+function rutaJugador(nombre,region) {
+  return '#jugador/' + encodeURIComponent(nombre) + (region === 'la2' ? '' : '/' + region);
+}
+const dragon = 'https://ddragon.leagueoflegends.com/cdn/';
+let fuentes, original;
+async function recursos() {
+  fuentes ||= Promise.all(['/data/apariencia-riot.json','/data/referencias-riot.json'].map(async ruta=>{
+    const r=await fetch(ruta);if(!r.ok)throw Error('No se pudo cargar el catálogo de Riot.');return r.json();
+  })).then(([apariencia,nombres])=>{
+    referencias=nombres;
+    const locales=coleccion=>original[coleccion].filter(x=>x.image.startsWith('/')&&!x.image.startsWith('//'));
+    return {...original,...apariencia,frames:locales('frames'),honors:locales('honors'),trophies:locales('trophies'),banners:locales('banners'),profileBanners:locales('profileBanners')};
+  }).catch(e=>{fuentes=null;throw e;});
+  return fuentes;
+}
+function iconoCampeon(id) {
+  const c=referencias?.campeones[id];
+  return c?dragon+catalog.version+'/img/champion/'+c.id+'.png':'/assets/mastery-sin-perdida.webp';
+}
 let catalog, current, consultaActual = 0, live = false, editPlayer;
 let recent = [];
 try { recent = JSON.parse(localStorage.getItem('rift:recent') || '[]'); if (!Array.isArray(recent)) recent = []; } catch {}
 function suggestions() {
-  recent = recent.filter(nombre => typeof nombre === 'string' && nombre.trim());
+  recent = recent.map(item => typeof item === 'string' ? {nombre:item,region:'la2'} : item)
+    .filter(item => item?.nombre && Object.hasOwn(regiones,item.region));
   $('#sin-recientes').hidden = recent.length > 0;
-  $('#recent-players').replaceChildren(...recent.map(nombre => {
+  $('#recent-players').replaceChildren(...recent.map(({nombre,region}) => {
     const fila = document.createElement('li');
     const enlace = document.createElement('a');
-    enlace.href = '#jugador/' + encodeURIComponent(nombre);
-    enlace.textContent = nombre;
+    enlace.href = rutaJugador(nombre,region);
+    enlace.textContent = nombre + ' · ' + regiones[region];
     fila.append(enlace);
     return fila;
   }));
@@ -28,8 +56,27 @@ $('#recientes').addEventListener('keydown', evento => {
   }
 });
 $('#recent-players').addEventListener('click', () => { $('#recientes').open = false; });
-document.addEventListener('sanctum-ready', event => { catalog = event.detail; if (location.hash.startsWith("#jugador/")) mostrarSeccion(location.hash); });
+document.addEventListener('sanctum-ready', event => { original = event.detail; if (location.hash.startsWith("#jugador/")) mostrarSeccion(location.hash); });
+let estadoAcceso;
+function consultarAcceso() {
+  estadoAcceso ||= pedir('/api/player',{accion:'disponibilidad'}).then(d=>{
+    const aviso=$('#acceso-riot');
+    aviso.hidden=d.disponible;
+    aviso.textContent=d.disponible?'':'Las consultas públicas esperan la aprobación de Riot. Podés explorar el perfil de ejemplo.';
+  }).catch(()=>{estadoAcceso=null;});
+}
+$('#ver-ejemplo').onclick=()=>{
+  const destino=$('#matches');
+  $('#history-status').textContent='';
+  cargar(destino,async()=>{
+    const r=await fetch('/data/referencias-riot.json');
+    if(!r.ok)throw Error('No se pudo abrir el ejemplo.');
+    return mostrarEjemplo(await r.json());
+  });
+  $('#history').scrollIntoView({block:'start'});
+};
 function selectLive(value) {
+  if(value)consultarAcceso();
   $('#recientes').open = false;
   live = value;
   $('#perfil').hidden = live;
@@ -57,16 +104,20 @@ function mostrarSeccion(hash) {
   boton.textContent = 'Buscar';
   let jugador = '';
   if (hash.startsWith('#jugador/')) {
-    try { jugador = decodeURIComponent(hash.slice(9)); } catch {}
+    try {
+      const [id, region='la2'] = hash.slice(9).split('/');
+      selectorRegion.value = Object.hasOwn(regiones,region) ? region : 'la2';
+      jugador = decodeURIComponent(id);
+    } catch {}
   }
   if (hash === '#search-guide' || hash === '#buscar') {
     current = null;
     $('#riot-id').value = '';
   }
-  if (jugador && current?.name !== jugador) {
+  if (jugador && (current?.name !== jugador || current?.region !== selectorRegion.value)) {
     current = null;
     $('#riot-id').value = jugador;
-    if (catalog) buscarJugador(jugador, false);
+    if (original) buscarJugador(jugador, false);
   }
   const consulta = Boolean(jugador) || hash === '#search-guide' || hash === '#buscar';
   selectLive(consulta);
@@ -102,15 +153,12 @@ $('#customize').addEventListener('click', event => {
   editPlayer?.('backgrounds', event.currentTarget);
 }, true);
 function renderMatches(matches, warnings = []) {
-  $('#matches').replaceChildren();
-  $('#history-status').textContent = warnings.length ? warnings.join(' ') : matches ? (matches.length ? 'Últimas partidas · LAS · Actualizadas al consultar' : 'No hay partidas recientes.') : 'Buscá tu perfil para consultar también tus últimas partidas.';
-  for (const match of matches || []) {
-    const row = document.createElement('article'); row.className = 'match-row';
-    for (const text of [match.win ? 'Victoria' : 'Derrota', match.champion, `${match.kills} / ${match.deaths} / ${match.assists}`, match.mode, `${Math.floor(match.duration / 60)} min`, new Date(match.date).toLocaleDateString('es-AR')]) {
-      const span = document.createElement('span'); span.textContent = text; row.append(span);
-    }
-    $('#matches').append(row);
-  }
+  const contenedor = $('#matches');
+  const perfil = current;
+  contenedor.replaceChildren();
+  $('#history-status').textContent = warnings.join(' ') || (matches ? '' : 'Buscá tu perfil para consultar tus partidas y tu progreso.');
+  if (!matches || !perfil) return;
+  if (live && referencias) verPerfil(contenedor,perfil,perfil.region,referencias);
 }
 function renderPlayer(data) {
   const clone = $('#perfil').cloneNode(true); clone.hidden = false; clone.id = 'remote-sanctum';
@@ -123,7 +171,7 @@ function renderPlayer(data) {
   clone.setAttribute('aria-label', `Santuario de ${data.name}`);
   const [name, tag] = data.name.split('#');
   q('h1').textContent = name; q('h1').after(text('p', `#${tag}`, 'identity-tag')); q('.level').textContent = data.level;
-  by('profile-icon').src = game + `v1/profile-icons/${data.icon}.jpg`; by('profile-icon').alt = catalog.icons.find(icono => String(icono.id) === String(data.icon))?.name || 'Ícono de ' + data.name;
+  by('profile-icon').src = dragon + catalog.version + '/img/profileicon/' + data.icon + '.png'; by('profile-icon').alt = catalog.icons.find(icono => String(icono.id) === String(data.icon))?.name || 'Ícono de ' + data.name;
   const niveles = ['IRON','BRONZE','SILVER','GOLD','PLATINUM','EMERALD','DIAMOND','MASTER','GRANDMASTER','CHALLENGER'];
   const divisiones = ['IV','III','II','I'];
   const puntaje = entrada => niveles.indexOf(entrada.tier) * 4 + divisiones.indexOf(entrada.rank);
@@ -139,7 +187,7 @@ function renderPlayer(data) {
   q('.identity-rank > span:last-child').textContent = rank ? cola : '';
   by('rank-trigger').querySelector('.achievement-note').textContent = rank ? cola : '';
   by('rank-trigger').querySelector('strong').textContent = tierLabel;
-  const emblem = tier => `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-${tier.toLowerCase()}.png`;
+  const emblem = tier => catalog.assets[tier.toLowerCase()] || catalog.frames.find(x=>x.id===tier.toLowerCase())?.image || catalog.assets.unranked;
   by('rank-emblem').src = rank ? emblem(rank.tier) : catalog.assets.unranked; by('rank-emblem').alt = tierLabel;
   by('rank-panel').querySelector('h2').textContent = 'Tus rangos en la Grieta';
   by('rank-grid').replaceChildren();
@@ -153,7 +201,7 @@ function renderPlayer(data) {
   }
   by('mastery-trigger').querySelector('strong').textContent = data.masteryScore;
   if (data.masteries[0]) {
-    by('mastery-icon').src = game + `v1/champion-icons/${data.masteries[0].championId}.png`;
+    by('mastery-icon').src = iconoCampeon(data.masteries[0].championId);
     q('.mastery-medal span').textContent = data.masteries[0].championLevel;
   } else q('.mastery-medal').hidden = true;
   by('mastery-panel').classList.add('remote-mastery');
@@ -162,7 +210,7 @@ function renderPlayer(data) {
   for (const mastery of data.masteries) {
     const champion = catalog.backgrounds.find(item => Math.floor(Number(item.id) / 1000) === mastery.championId);
     const card = text('div', '', 'champion-card'); const medal = text('div', '', 'champion-medal');
-    medal.append(image(game + `v1/champion-icons/${mastery.championId}.png`, champion?.champion || 'Campeón'), image(catalog.assets.mastery, '', 'champion-decoration'));
+    medal.append(image(iconoCampeon(mastery.championId), champion?.champion || 'Campeón'), image(catalog.assets.mastery, '', 'champion-decoration'));
     card.append(medal, text('strong', champion?.champion || `Campeón ${mastery.championId}`), text('p', `✧ Maestría ${mastery.championLevel}`), text('small', `${mastery.championPoints.toLocaleString('es-AR')} puntos`));
     by('champion-grid').append(card);
   }
@@ -201,7 +249,7 @@ function renderPlayer(data) {
     if (devolverFoco) clone.querySelector('[aria-controls="' + panel.id + '"]').focus({ preventScroll: true });
   };
   clone.onpointerdown = event => { if (!event.target.closest('.detail-panel, [data-original-id="rank-trigger"], [data-original-id="mastery-trigger"]')) closePanels(); };
-  const key = `rift:appearance:${data.name.toLowerCase()}`;
+  const key = (data.region==='la2'?'rift:appearance:':'rift:appearance:'+data.region+':')+data.name.toLowerCase();
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch {}
   const campeon = data.masteries[0];
@@ -237,7 +285,7 @@ function renderPlayer(data) {
   editPlayer = (tab, trigger) => {
     closePanels();
     const initial = validateAppearance({ ...defaults, ...saved }, catalog);
-    openCustomizer(tab, trigger, { appearance: initial, defaults, name, level: data.level, save(values, fields, reset) {
+    openCustomizer(tab, trigger, { catalogo:catalog, appearance: initial, defaults, name, level: data.level, save(values, fields, reset) {
       // Solo conserva elecciones manuales; nivel, rangos y maestrías siguen siendo de Riot.
       if (reset) saved = {};
       for (const field of fields) saved[field] = values[field];
@@ -251,18 +299,23 @@ function renderPlayer(data) {
 }
 $('#riot-search').onsubmit = event => {
   event.preventDefault();
-  if (catalog) buscarJugador($('#riot-id').value.trim(), true);
+  if (original) buscarJugador($('#riot-id').value.trim(), true);
 };
 async function buscarJugador(jugador, actualizarRuta) {
   const consulta = ++consultaActual;
   const button = $('#riot-search button'); button.disabled = true;
   selectLive(true); $('#history-status').textContent = 'Consultando Riot…'; button.textContent = 'Buscando…';
   try {
-    const response = await fetch('/api/player?id=' + encodeURIComponent(jugador));
+    const region = selectorRegion.value;
+    const response = await fetch('/api/player?id=' + encodeURIComponent(jugador) + '&region=' + region);
     if (!(response.headers.get('content-type') || '').includes('json')) throw Error('La consulta requiere el servidor de Cloudflare Pages.');
     const data = await response.json(); if (consulta !== consultaActual) return; if (!response.ok) throw Error(data.error);
+    const coleccion = await recursos();
+    if (consulta !== consultaActual) return;
+    catalog = coleccion;
     const focoEnBusqueda = $('#riot-search').contains(document.activeElement) || document.activeElement === document.body;
-    const destino = '#jugador/' + encodeURIComponent(data.name);
+    data.region = region;
+    const destino = rutaJugador(data.name,region);
     if (actualizarRuta && location.hash !== destino) history.pushState(null, '', destino);
     current = data; renderPlayer(data); window.scrollTo(0, 0);
     if (focoEnBusqueda) {
@@ -270,7 +323,7 @@ async function buscarJugador(jugador, actualizarRuta) {
       titulo.tabIndex = -1;
       titulo.focus({ preventScroll: true });
     }
-    recent = [data.name, ...recent.filter(name => name !== data.name)].slice(0, 15); suggestions();
+    recent = [{nombre:data.name,region}, ...recent.filter(x => x.nombre !== data.name || x.region !== region)].slice(0, 15); suggestions();
     try { localStorage.setItem('rift:recent', JSON.stringify(recent)); } catch {}
   } catch (error) { if (consulta !== consultaActual) return; $('#history-status').textContent = error.message; $('#history').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
   finally { if (consulta === consultaActual) { button.disabled = false; button.textContent = 'Buscar'; } }
