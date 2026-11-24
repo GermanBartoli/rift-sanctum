@@ -238,7 +238,11 @@ export function verPerfil(destino, datos, region, catalogo, lector) {
       }[orden];
       filtrada.sort((a, b) => b[clave] - a[clave]);
       cuerpo.replaceChildren(
-        nodo("p", numero(filtrada.length) + " campeones"),
+        nodo(
+          "p",
+          numero(filtrada.length) +
+            (filtrada.length === 1 ? " campeón" : " campeones"),
+        ),
         tabla(
           ["Campeón", "Nivel", "Puntos", "Última partida"],
           filtrada.map((m) => [
@@ -545,9 +549,9 @@ export function verPerfil(destino, datos, region, catalogo, lector) {
       estado.textContent = [
         partidas.length
           ? numero(partidas.length) +
-            " partidas · " +
+            (partidas.length === 1 ? " partida · " : " partidas · ") +
             victorias +
-            " victorias · " +
+            (victorias === 1 ? " victoria · " : " victorias · ") +
             Math.round((victorias * 100) / partidas.length) +
             " % · KDA " +
             ((bajas + asistencias) / Math.max(1, muertes)).toFixed(2)
@@ -611,7 +615,12 @@ export function verPerfil(destino, datos, region, catalogo, lector) {
       nodo(
         "p",
         numero(partidas.length) +
-          " partidas del filtro actual. Podés ampliar la muestra con «Cargar más partidas».",
+          (partidas.length === 1
+            ? " partida del filtro actual."
+            : " partidas del filtro actual.") +
+          (siguiente != null
+            ? " Podés ampliar la muestra con «Cargar más partidas»."
+            : ""),
       ),
     );
     if (!partidas.length) return panel;
