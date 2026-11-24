@@ -105,13 +105,19 @@ function mostrarSeccion(hash) {
     $('#riot-id').value = jugador;
     if (original) buscarJugador(jugador, false);
   }
-  const consulta = Boolean(jugador) || hash === '#search-guide' || hash === '#buscar';
+  const comparar = hash === '#comparador';
+  const consulta = comparar || Boolean(jugador) || hash === '#search-guide' || hash === '#buscar';
   selectLive(consulta);
+  if (comparar) {
+    $('#titulo-comparador').focus({ preventScroll: true });
+    $('#comparador').scrollIntoView({ block: 'center' });
+    return;
+  }
   window.scrollTo(0, 0);
   if (consulta && !current) $('#riot-id').focus({ preventScroll: true });
 }
 
-for (const enlace of document.querySelectorAll('a[href="#perfil"], #live-tab')) {
+for (const enlace of document.querySelectorAll('a[href="#perfil"], a[href="#comparador"], #live-tab')) {
   enlace.addEventListener('click', evento => {
     if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
     evento.preventDefault();
@@ -122,9 +128,9 @@ for (const enlace of document.querySelectorAll('a[href="#perfil"], #live-tab')) 
   });
 }
 window.addEventListener('hashchange', () => {
-  if (location.hash.startsWith('#jugador/') || ['', '#perfil', '#search-guide', '#buscar'].includes(location.hash)) mostrarSeccion(location.hash);
+  if (location.hash.startsWith('#jugador/') || ['', '#perfil', '#search-guide', '#buscar', '#comparador'].includes(location.hash)) mostrarSeccion(location.hash);
 });
-if (location.hash === '#search-guide' || location.hash === '#buscar') mostrarSeccion(location.hash);
+if (['#search-guide', '#buscar', '#comparador'].includes(location.hash)) mostrarSeccion(location.hash);
 
 $('.skip').addEventListener('click', evento => {
   if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey) return;
