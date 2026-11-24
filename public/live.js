@@ -61,9 +61,14 @@ let estadoAcceso;
 function consultarAcceso() {
   estadoAcceso ||= pedir('/api/player',{accion:'disponibilidad'}).then(d=>{
     const aviso=$('#acceso-riot');
+    $('#riot-search').hidden = !d.disponible;
+    $('.guide-hint').hidden = !d.disponible;
+    $('.perfiles-destacados').closest('nav').hidden = !d.disponible;
     aviso.hidden=d.disponible;
     aviso.textContent=d.disponible?'':'Las consultas públicas esperan la aprobación de Riot. Podés explorar el perfil de ejemplo.';
+    return d.disponible;
   }).catch(()=>{estadoAcceso=null;});
+  return estadoAcceso;
 }
 $('#ver-ejemplo').onclick=()=>{
   const destino=$('#matches');
@@ -307,9 +312,16 @@ async function buscarJugador(jugador, actualizarRuta) {
   selectLive(true); $('#history-status').textContent = 'Consultando Riot…'; button.textContent = 'Buscando…';
   try {
     const region = selectorRegion.value;
+    const disponible = await consultarAcceso();
+    if (consulta !== consultaActual) return;
+    if (disponible === false) {
+      $('#history-status').textContent = 'Podés consultar las partidas del perfil de ejemplo.';
+      return;
+    }
     const response = await fetch('/api/player?id=' + encodeURIComponent(jugador) + '&region=' + region);
     if (!(response.headers.get('content-type') || '').includes('json')) throw Error('La consulta requiere el servidor de Cloudflare Pages.');
     const data = await response.json(); if (consulta !== consultaActual) return; if (!response.ok) throw Error(data.error);
+    $('#acceso-riot').hidden = true;
     const coleccion = await recursos();
     if (consulta !== consultaActual) return;
     catalog = coleccion;
@@ -325,6 +337,6 @@ async function buscarJugador(jugador, actualizarRuta) {
     }
     recent = [{nombre:data.name,region}, ...recent.filter(x => x.nombre !== data.name || x.region !== region)].slice(0, 15); suggestions();
     try { localStorage.setItem('rift:recent', JSON.stringify(recent)); } catch {}
-  } catch (error) { if (consulta !== consultaActual) return; $('#history-status').textContent = error.message; $('#history').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  } catch (error) { if (consulta !== consultaActual) return; const aviso = $('#acceso-riot'); aviso.hidden = false; aviso.textContent = jugador + ' · ' + error.message; aviso.scrollIntoView({block:'center'}); }
   finally { if (consulta === consultaActual) { button.disabled = false; button.textContent = 'Buscar'; } }
 };
